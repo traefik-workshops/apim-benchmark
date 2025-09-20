@@ -7,6 +7,15 @@ terraform {
   }
 }
 
+locals {
+  tolerations = [{
+    key      = "node"
+    operator = "Equal"
+    value    = var.taint
+    effect   = "NoSchedule"
+  }]
+}
+
 resource "kubernetes_namespace" "dependencies" {
   metadata {
     name = var.namespace
