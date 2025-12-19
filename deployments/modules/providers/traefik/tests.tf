@@ -1,13 +1,9 @@
 # module "tests" {
 #   source           = "../dependencies/k6/tests"
 #   namespace        = var.namespace
-#   analytics        = var.analytics
-#   auth             = var.auth
-#   quota            = var.quota
-#   rate_limit       = var.rate_limit
-#   open_telemetry   = var.open_telemetry
-#   header_injection = var.header_injection
+#   middleware       = var.middleware
 #   service          = var.service
+#   route_count      = var.route_count
 
 #   depends_on = [kubernetes_namespace.traefik]
 # }

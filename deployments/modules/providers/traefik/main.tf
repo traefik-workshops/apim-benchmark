@@ -4,8 +4,17 @@ resource "kubernetes_namespace" "traefik" {
   }
 }
 
+module "upstream" {
+  source        = "../../dependencies/upstream"
+  namespace     = var.namespace
+  taint         = var.upstream_taint
+  service_count = var.service.count
+
+  depends_on = [kubernetes_namespace.traefik]
+}
+
 module "traefik" {
-  source = "git::https://github.com/traefik-workshops/terraform-demo-modules.git//k8s/traefik?ref=main"
+  source = "git::https://github.com/traefik-workshops/terraform-demo-modules.git//traefik/k8s?ref=main"
   namespace = "traefik"
 
   enable_api_gateway    = false

@@ -1,9 +1,3 @@
-resource "kubernetes_namespace" "upstream" {
-  metadata {
-    name = var.namespace
-  }
-}
-
 resource "kubernetes_deployment" "fortio" {
   metadata {
     name      = "fortio"
@@ -40,8 +34,6 @@ resource "kubernetes_deployment" "fortio" {
       }
     }
   }
-
-  depends_on = [kubernetes_namespace.upstream]
 }
 
 resource "kubernetes_service_v1" "fortio" {
@@ -65,7 +57,6 @@ resource "kubernetes_service_v1" "fortio" {
     }
   }
 
-  count      = var.service_count
-  depends_on = [kubernetes_deployment.fortio]
+  count = var.service_count
 }
 

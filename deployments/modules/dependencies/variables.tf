@@ -3,7 +3,7 @@ variable "namespace" {
   default = "dependencies"
 }
 
-variable "label" {
+variable "taint" {
   type = string
 }
 
@@ -19,12 +19,6 @@ variable "grafana" {
       type = "ClusterIP"
     }
   }
-}
-
-variable "open_telemetry" {
-  type = object({
-    enabled = bool
-  })
 }
 
 variable "keycloak" {

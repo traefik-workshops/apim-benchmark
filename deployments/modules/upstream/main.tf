@@ -1,8 +1,16 @@
+resource "kubernetes_namespace" "upstream" {
+  metadata {
+    name = var.namespace
+  }
+}
+
 module "upstream" {
   source        = "../dependencies/upstream"
   namespace     = var.namespace
   taint         = var.taint
   service_count = var.service.count
+
+  depends_on = [kubernetes_namespace.upstream]
 }
 
 module "scenarios" {

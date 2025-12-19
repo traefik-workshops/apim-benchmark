@@ -12,7 +12,7 @@ locals {
       taint = provider != "upstream" ? "${provider}-upstream" : "upstream"
       label = ""
       count = var.upstream_node_count
-    } 
+    }
   ]
 
   loadgen_nodes = [
@@ -25,7 +25,7 @@ locals {
 
   dependencies_node = [{
     taint = "dependencies"
-      label = ""
+    label = ""
     count = var.dependencies_node_count
   }]
 
@@ -38,7 +38,7 @@ locals {
 }
 
 module "k3d" {
-  source = "git::https://github.com/traefik-workshops/terraform-demo-modules.git//clusters/k3d?ref=main"
+  source = "git::https://github.com/traefik-workshops/terraform-demo-modules.git//compute/suse/k3d?ref=main"
 
   cluster_name = "benchmark"
   worker_nodes = local.all_nodes

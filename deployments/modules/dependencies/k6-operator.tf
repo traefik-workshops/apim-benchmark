@@ -13,7 +13,7 @@ resource "helm_release" "k6-operator" {
         create = false
       }
       manager = {
-        resources = "null"
+        resources = null
       }
       tolerations = local.tolerations
     })

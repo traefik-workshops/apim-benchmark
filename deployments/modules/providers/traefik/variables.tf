@@ -6,6 +6,14 @@ variable "taint" {
   type = string
 }
 
+variable "upstream_taint" {
+  type = string
+}
+
+variable "loadgen_taint" {
+  type = string
+}
+
 variable "gateway_version" {
   type = string
 }
@@ -42,12 +50,6 @@ variable "service" {
 
 variable "route_count" {
   type = number
-}
-
-variable "apim_providers_route_count" {
-  type        = number
-  default     = 1
-  description = "Route count for providers."
 }
 
 variable "middlewares" {
