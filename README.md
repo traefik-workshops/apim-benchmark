@@ -20,8 +20,9 @@ Originated from [TykTechnologies/tyk-performance-testing](https://github.com/Tyk
 | JWT Keycloak (RS256)  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Header Manipulation   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | TLS Termination       | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
-| Prometheus Metrics    | :white_check_mark: | :white_check_mark: | :x: (needs Pump)    | :white_check_mark: | :white_check_mark: |
-| OpenTelemetry Traces  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
+| OTLP Metrics          | :white_check_mark: | :x:                | via Pump            | :x:                | :white_check_mark: |
+| OTLP Logs             | :white_check_mark: | :x:                | :x:                | :x:                | :white_check_mark: |
+| OTLP Traces           | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
 
 ## Quick Start (local k3d)
 
@@ -115,9 +116,9 @@ apim_providers_middlewares = {
     response = { set = { "X-Resp" = "value" }, remove = [] }
   }
   observability = {
-    logs    = { enabled = false, exporter = "" }
     metrics = { enabled = true }
-    traces  = { enabled = false, ratio = "0.1" }
+    logs    = { enabled = false }
+    traces  = { enabled = true, ratio = "0.1" }
   }
 }
 ```

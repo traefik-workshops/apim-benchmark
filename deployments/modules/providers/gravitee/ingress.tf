@@ -66,8 +66,9 @@ metadata:
     auth: "${local.is_auth_enabled ? var.middlewares.auth.type : "Off"}"
     rate-limiting: "${var.middlewares.rate_limit.enabled ? format("%d/%d", var.middlewares.rate_limit.rate, var.middlewares.rate_limit.per) : "Off"}"
     quota: "${var.middlewares.quota.enabled ? format("%d/%d", var.middlewares.quota.rate, var.middlewares.quota.per) : "Off"}"
-    open-telemetry-traces: "${var.middlewares.observability.traces.enabled ? var.middlewares.observability.traces.ratio : "Off"}"
-    open-telemetry-metrics: "${var.middlewares.observability.metrics.enabled ? "On" : "Off"}"
+    open-telemetry-traces: "N/A"
+    open-telemetry-metrics: "N/A"
+    open-telemetry-logs: "N/A"
 spec:
   name: "api-${count.index}"
   contextRef:

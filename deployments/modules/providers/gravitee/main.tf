@@ -89,9 +89,10 @@ resource "helm_release" "gravitee" {
               enabled = true
             }
           }
+          # Gravitee APIM does not support OTLP export for metrics, logs, or traces.
+          # Internal metrics are disabled since there is no scraping infrastructure.
           metrics = {
-            enabled = var.middlewares.observability.metrics.enabled
-            labels  = ["local", "remote", "http_method", "http_code", "http_path", "http_route"]
+            enabled = false
           }
         }
         reporters = {

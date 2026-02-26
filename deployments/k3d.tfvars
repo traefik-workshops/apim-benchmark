@@ -72,7 +72,7 @@ apim_providers_route_count = 1
 
 # --- Middlewares ---------------------------------------------------------------
 # auth.type: "disabled" | "token_postgres" | "token_iac" | "jwt_hmac" | "jwt_keycloak"
-# observability exporters: metrics "otlp"|"prometheus", logs "otlp"|"stdout", traces "otlp"
+# observability: all signals exported via OTLP to opentelemetry-collector.dependencies.svc
 apim_providers_middlewares = {
   auth = {
     type      = "jwt_keycloak"
@@ -102,18 +102,11 @@ apim_providers_middlewares = {
     }
   }
   observability = {
-    logs = {
-      enabled  = false
-      exporter = ""
-    }
-    metrics = {
-      enabled  = true
-      exporter = "prometheus"
-    }
+    metrics = { enabled = true }
+    logs    = { enabled = false }
     traces = {
-      enabled  = true
-      exporter = "otlp"
-      ratio    = "0.1"
+      enabled = true
+      ratio   = "0.1"
     }
   }
 }

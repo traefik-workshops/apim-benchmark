@@ -83,18 +83,11 @@ variable "middlewares" {
       })
     })
     observability = object({
-      logs = object({
-        enabled  = bool
-        exporter = string
-      })
-      metrics = object({
-        enabled  = bool
-        exporter = string
-      })
+      metrics = object({ enabled = bool })
+      logs    = object({ enabled = bool })
       traces = object({
-        enabled  = bool
-        exporter = string
-        ratio    = string
+        enabled = bool
+        ratio   = string
       })
     })
   })

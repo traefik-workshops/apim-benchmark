@@ -115,7 +115,7 @@ resource "helm_release" "traefik" {
         }
         access = merge({
           enabled = var.middlewares.observability.logs.enabled
-          }, var.middlewares.observability.logs.enabled && var.middlewares.observability.logs.exporter == "otlp" ? {
+          }, var.middlewares.observability.logs.enabled ? {
           otlp = {
             enabled = true
             http = {
@@ -129,11 +129,20 @@ resource "helm_release" "traefik" {
       }
 
       metrics = {
-        prometheus = {
+        otlp = {
+          enabled              = var.middlewares.observability.metrics.enabled
           addEntryPointsLabels = var.middlewares.observability.metrics.enabled
           addRoutersLabels     = var.middlewares.observability.metrics.enabled
           addServicesLabels    = var.middlewares.observability.metrics.enabled
+          http = {
+            enabled  = var.middlewares.observability.metrics.enabled
+            endpoint = "http://opentelemetry-collector.dependencies.svc:4318/v1/metrics"
+            tls = {
+              insecureSkipVerify = true
+            }
+          }
         }
+        prometheus = null
       }
 
       tracing = {

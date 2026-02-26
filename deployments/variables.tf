@@ -186,18 +186,11 @@ variable "apim_providers_middlewares" {
       })
     })
     observability = object({
-      logs = object({
-        enabled  = bool
-        exporter = string # "otlp" | "stdout"
-      })
-      metrics = object({
-        enabled  = bool
-        exporter = string # "otlp" | "prometheus"
-      })
+      metrics = object({ enabled = bool })
+      logs    = object({ enabled = bool })
       traces = object({
-        enabled  = bool
-        exporter = string # "otlp"
-        ratio    = string
+        enabled = bool
+        ratio   = string
       })
     })
   })
@@ -231,18 +224,11 @@ variable "apim_providers_middlewares" {
       }
     }
     observability = {
-      logs = {
-        enabled  = false
-        exporter = ""
-      }
-      metrics = {
-        enabled  = false
-        exporter = ""
-      }
+      metrics = { enabled = false }
+      logs    = { enabled = false }
       traces = {
-        enabled  = false
-        exporter = ""
-        ratio    = ""
+        enabled = false
+        ratio   = ""
       }
     }
   }

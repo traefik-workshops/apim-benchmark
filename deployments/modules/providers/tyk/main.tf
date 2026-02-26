@@ -53,7 +53,7 @@ resource "helm_release" "tyk" {
         }
         storageType = "redis"
         components = {
-          pump = false
+          pump = var.middlewares.observability.metrics.enabled
         }
         }, var.middlewares.tls.enabled ? {
         tls = {
@@ -61,6 +61,23 @@ resource "helm_release" "tyk" {
           useDefaultTykCertificate = true
         }
       } : {})
+
+      # --- Tyk Pump (analytics exporter) -----------------------------------
+      # Enabled when observability.metrics is on. Reads analytics from Redis
+      # and pushes to the configured backends.
+      "tyk-pump" = var.middlewares.observability.metrics.enabled ? {
+        pump = {
+          backend = ["prometheus"]
+          promBackendSettings = {
+            listen_address = ":9090"
+          }
+          nodeSelector = {
+            node = var.taint
+          }
+          tolerations = local.tolerations
+          resources   = {}
+        }
+      } : {}
 
       "tyk-gateway" = {
         gateway = {

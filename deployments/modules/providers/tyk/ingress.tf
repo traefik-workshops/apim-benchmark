@@ -100,7 +100,8 @@ resource "kubernetes_config_map" "tyk_api_definitions" {
       rate-limiting          = var.middlewares.rate_limit.enabled ? format("%d/%d", var.middlewares.rate_limit.rate, var.middlewares.rate_limit.per) : "Off"
       quota                  = var.middlewares.quota.enabled ? format("%d/%d", var.middlewares.quota.rate, var.middlewares.quota.per) : "Off"
       open-telemetry-traces  = var.middlewares.observability.traces.enabled ? var.middlewares.observability.traces.ratio : "Off"
-      open-telemetry-metrics = var.middlewares.observability.metrics.enabled ? "On" : "Off"
+      open-telemetry-metrics = var.middlewares.observability.metrics.enabled ? "Pump" : "Off"
+      open-telemetry-logs    = "N/A"
     }
   }
 

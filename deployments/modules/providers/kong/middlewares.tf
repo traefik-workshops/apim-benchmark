@@ -14,7 +14,6 @@ locals {
     var.middlewares.rate_limit.enabled || var.middlewares.quota.enabled ? "rate-limiting" : "",
     length(var.middlewares.headers.request.set) > 0 || length(var.middlewares.headers.request.remove) > 0 ? "request-transformer" : "",
     length(var.middlewares.headers.response.set) > 0 || length(var.middlewares.headers.response.remove) > 0 ? "response-transformer" : "",
-    var.middlewares.observability.metrics.enabled ? "prometheus" : "",
     var.middlewares.observability.traces.enabled ? "opentelemetry" : "",
   ])
   p       = join(",", local.plugin_list)
@@ -281,24 +280,7 @@ YAML
 }
 
 # ---------------------------------------------------------------------------
-# Observability — Prometheus
-# ---------------------------------------------------------------------------
-resource "kubectl_manifest" "prometheus-plugin" {
-  yaml_body  = <<YAML
-apiVersion: configuration.konghq.com/v1
-kind: KongPlugin
-metadata:
-  name: prometheus
-  namespace: "${var.namespace}"
-plugin: prometheus
-config:
-  per_consumer: true
-YAML
-  depends_on = [helm_release.kong]
-}
-
-# ---------------------------------------------------------------------------
-# Observability — OpenTelemetry
+# Observability — OpenTelemetry (traces only; Kong OSS has no OTLP metrics/logs)
 # ---------------------------------------------------------------------------
 resource "kubectl_manifest" "opentelemetry-plugin" {
   yaml_body  = <<YAML
