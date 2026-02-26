@@ -74,7 +74,13 @@ export default function (keys) {
 
   let headers = {};
   if (getAuth()) {
-    headers = { "Authorization": keys[i % keys.length] };
+    const authType = getAuthType();
+    // JWT types require "Bearer " prefix (mandatory for Envoy Gateway,
+    // accepted by Kong / Tyk / Gravitee which strip it automatically).
+    // API-key types (token_iac, token_postgres) use raw value.
+    const isJWT = ["jwt_hmac", "jwt_keycloak", "JWT-RSA", "JWT-HMAC"].includes(authType);
+    const value = isJWT ? "Bearer " + keys[i % keys.length] : keys[i % keys.length];
+    headers = { "Authorization": value };
   }
 
   let url;

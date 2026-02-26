@@ -25,17 +25,17 @@ resource "kubernetes_namespace" "dependencies" {
 module "traefik" {
   source = "../../../../terraform-demo-modules/traefik/k8s"
 
-  namespace             = var.namespace
-  serviceType           = var.service_type
-  traefik_chart_version = "39.0.2"
-  skip_crds             = true
-  kubernetes_namespaces = [var.namespace]
-  ingress_class_name    = "traefik-dependencies"
+  namespace                = var.namespace
+  serviceType              = var.service_type
+  traefik_chart_version    = "39.0.2"
+  skip_crds                = true
+  kubernetes_namespaces    = [var.namespace]
+  ingress_class_name       = "traefik-dependencies"
   ingress_class_is_default = false
-  enable_access_logs   = false
-  enable_dashboard     = true
-  dashboard_insecure   = true
-  tolerations          = local.tolerations
+  enable_access_logs       = false
+  enable_dashboard         = true
+  dashboard_insecure       = true
+  tolerations              = local.tolerations
 
   dns_traefiker = {
     enabled = false
@@ -129,8 +129,8 @@ module "grafana-stack" {
       }
     }
     kube-state-metrics = {
-      tolerations  = local.tolerations
-      nodeSelector = { node = var.taint }
+      tolerations           = local.tolerations
+      nodeSelector          = { node = var.taint }
       metricLabelsAllowlist = ["nodes=[*]"]
     }
     prometheus-node-exporter = {

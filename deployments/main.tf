@@ -35,16 +35,16 @@ module "upstream" {
 module "traefik" {
   source = "./modules/providers/traefik"
 
-  namespace          = "traefik"
-  gateway_version    = var.apim_providers.traefik.version
-  taint              = var.node_taints.traefik
-  upstream_taint     = var.node_taints.traefik-upstream
-  loadgen_taint      = var.node_taints.traefik-loadgen
-  deployment         = var.apim_providers_deployment
-  service            = var.apim_providers_service
-  middlewares        = var.apim_providers_middlewares
-  route_count        = var.apim_providers_route_count
-  traefik_hub_token  = var.traefik_hub_token
+  namespace         = "traefik"
+  gateway_version   = var.apim_providers.traefik.version
+  taint             = var.node_taints.traefik
+  upstream_taint    = var.node_taints.traefik-upstream
+  loadgen_taint     = var.node_taints.traefik-loadgen
+  deployment        = var.apim_providers_deployment
+  service           = var.apim_providers_service
+  middlewares       = var.apim_providers_middlewares
+  route_count       = var.apim_providers_route_count
+  traefik_hub_token = var.traefik_hub_token
 
   count = var.apim_providers.traefik.enabled ? 1 : 0
 }

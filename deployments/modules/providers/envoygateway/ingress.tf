@@ -83,7 +83,7 @@ spec:
     allowedRoutes:
       namespaces:
         from: Same
-%{ if var.middlewares.tls.enabled ~}
+%{if var.middlewares.tls.enabled~}
   - name: https
     protocol: HTTPS
     port: 8443
@@ -95,7 +95,7 @@ spec:
     allowedRoutes:
       namespaces:
         from: Same
-%{ endif ~}
+%{endif~}
 YAML
 
   depends_on = [kubectl_manifest.gatewayclass]
@@ -120,43 +120,43 @@ spec:
     - path:
         type: PathPrefix
         value: /api-${count.index}
-%{ if local.has_headers ~}
+%{if local.has_headers~}
     filters:
-%{ if local.has_req_headers ~}
+%{if local.has_req_headers~}
     - type: RequestHeaderModifier
       requestHeaderModifier:
-%{ if length(var.middlewares.headers.request.set) > 0 ~}
+%{if length(var.middlewares.headers.request.set) > 0~}
         set:
-%{ for name, value in var.middlewares.headers.request.set ~}
+%{for name, value in var.middlewares.headers.request.set~}
         - name: ${name}
           value: "${value}"
-%{ endfor ~}
-%{ endif ~}
-%{ if length(var.middlewares.headers.request.remove) > 0 ~}
+%{endfor~}
+%{endif~}
+%{if length(var.middlewares.headers.request.remove) > 0~}
         remove:
-%{ for name in var.middlewares.headers.request.remove ~}
+%{for name in var.middlewares.headers.request.remove~}
         - ${name}
-%{ endfor ~}
-%{ endif ~}
-%{ endif ~}
-%{ if local.has_resp_headers ~}
+%{endfor~}
+%{endif~}
+%{endif~}
+%{if local.has_resp_headers~}
     - type: ResponseHeaderModifier
       responseHeaderModifier:
-%{ if length(var.middlewares.headers.response.set) > 0 ~}
+%{if length(var.middlewares.headers.response.set) > 0~}
         set:
-%{ for name, value in var.middlewares.headers.response.set ~}
+%{for name, value in var.middlewares.headers.response.set~}
         - name: ${name}
           value: "${value}"
-%{ endfor ~}
-%{ endif ~}
-%{ if length(var.middlewares.headers.response.remove) > 0 ~}
+%{endfor~}
+%{endif~}
+%{if length(var.middlewares.headers.response.remove) > 0~}
         remove:
-%{ for name in var.middlewares.headers.response.remove ~}
+%{for name in var.middlewares.headers.response.remove~}
         - ${name}
-%{ endfor ~}
-%{ endif ~}
-%{ endif ~}
-%{ endif ~}
+%{endfor~}
+%{endif~}
+%{endif~}
+%{endif~}
     backendRefs:
     - name: fortio-${count.index % var.service.count}
       port: 8080

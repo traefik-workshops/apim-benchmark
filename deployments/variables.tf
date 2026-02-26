@@ -46,11 +46,11 @@ variable "apim_providers" {
       enabled = bool
       version = string
     })
-    kong = object({ 
+    kong = object({
       enabled = bool
       version = string
     })
-    traefik = object({ 
+    traefik = object({
       enabled = bool
       version = string
     })
@@ -91,7 +91,7 @@ variable "apim_providers" {
 }
 
 variable "apim_providers_deployment" {
-    type = object({
+  type = object({
     type          = string
     replica_count = number
     hpa = object({
@@ -252,45 +252,45 @@ variable "apim_providers_middlewares" {
 
 variable "node_taints" {
   type = object({
-    dependencies       = string
-    upstream           = string
-    upstream-loadgen   = string
-    gravitee           = string
-    gravitee-upstream  = string
-    gravitee-loadgen   = string
-    kong               = string
-    kong-upstream      = string
-    kong-loadgen       = string
-    traefik            = string
-    traefik-upstream   = string
-    traefik-loadgen    = string
-    tyk                     = string
-    tyk-upstream            = string
-    tyk-loadgen             = string
-    envoygateway            = string
-    envoygateway-upstream   = string
-    envoygateway-loadgen    = string
+    dependencies          = string
+    upstream              = string
+    upstream-loadgen      = string
+    gravitee              = string
+    gravitee-upstream     = string
+    gravitee-loadgen      = string
+    kong                  = string
+    kong-upstream         = string
+    kong-loadgen          = string
+    traefik               = string
+    traefik-upstream      = string
+    traefik-loadgen       = string
+    tyk                   = string
+    tyk-upstream          = string
+    tyk-loadgen           = string
+    envoygateway          = string
+    envoygateway-upstream = string
+    envoygateway-loadgen  = string
   })
 
   default = {
-    dependencies            = "dependencies"
-    upstream                = "upstream"
-    upstream-loadgen        = "upstream-loadgen"
-    gravitee                = "gravitee"
-    gravitee-upstream       = "gravitee-upstream"
-    gravitee-loadgen        = "gravitee-loadgen"
-    kong                    = "kong"
-    kong-upstream           = "kong-upstream"
-    kong-loadgen            = "kong-loadgen"
-    traefik                 = "traefik"
-    traefik-upstream        = "traefik-upstream"
-    traefik-loadgen         = "traefik-loadgen"
-    tyk                     = "tyk"
-    tyk-upstream            = "tyk-upstream"
-    tyk-loadgen             = "tyk-loadgen"
-    envoygateway            = "envoygateway"
-    envoygateway-upstream   = "envoygateway-upstream"
-    envoygateway-loadgen    = "envoygateway-loadgen"
+    dependencies          = "dependencies"
+    upstream              = "upstream"
+    upstream-loadgen      = "upstream-loadgen"
+    gravitee              = "gravitee"
+    gravitee-upstream     = "gravitee-upstream"
+    gravitee-loadgen      = "gravitee-loadgen"
+    kong                  = "kong"
+    kong-upstream         = "kong-upstream"
+    kong-loadgen          = "kong-loadgen"
+    traefik               = "traefik"
+    traefik-upstream      = "traefik-upstream"
+    traefik-loadgen       = "traefik-loadgen"
+    tyk                   = "tyk"
+    tyk-upstream          = "tyk-upstream"
+    tyk-loadgen           = "tyk-loadgen"
+    envoygateway          = "envoygateway"
+    envoygateway-upstream = "envoygateway-upstream"
+    envoygateway-loadgen  = "envoygateway-loadgen"
   }
   description = "Mapping for node labels to determine the values for node selectors for each deployment."
 }

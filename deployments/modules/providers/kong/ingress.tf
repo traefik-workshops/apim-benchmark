@@ -1,5 +1,5 @@
 resource "kubectl_manifest" "api" {
-  yaml_body = <<YAML
+  yaml_body  = <<YAML
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -15,10 +15,10 @@ metadata:
     open-telemetry-metrics: "${var.middlewares.observability.metrics.enabled ? "On" : "Off"}"
 spec:
   ingressClassName: kong
-%{ if var.middlewares.tls.enabled ~}
+%{if var.middlewares.tls.enabled~}
   tls:
   - secretName: gateway-tls-cert
-%{ endif ~}
+%{endif~}
   rules:
   - http:
       paths:

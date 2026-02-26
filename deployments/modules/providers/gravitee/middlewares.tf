@@ -27,7 +27,7 @@ resource "helm_release" "gravitee-operator" {
 }
 
 resource "kubectl_manifest" "gravitee-context" {
-  yaml_body = <<YAML
+  yaml_body  = <<YAML
 apiVersion: gravitee.io/v1alpha1
 kind: ManagementContext
 metadata:

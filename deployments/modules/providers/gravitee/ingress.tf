@@ -1,37 +1,51 @@
 locals {
   # Gravitee supports: token_postgres (API_KEY), jwt_hmac, jwt_keycloak
   # token_iac is N/A for Gravitee
-  is_auth_enabled  = contains(["token_postgres", "jwt_hmac", "jwt_keycloak"], var.middlewares.auth.type)
-  is_jwt_auth      = contains(["jwt_hmac", "jwt_keycloak"], var.middlewares.auth.type)
+  is_auth_enabled = contains(["token_postgres", "jwt_hmac", "jwt_keycloak"], var.middlewares.auth.type)
+  is_jwt_auth     = contains(["jwt_hmac", "jwt_keycloak"], var.middlewares.auth.type)
   # Gravitee only supports token_postgres (API_KEY via Portal subscriptions)
   # token_iac is N/A for Gravitee — falls through to KEY_LESS
   is_token_auth    = var.middlewares.auth.type == "token_postgres"
   has_req_headers  = length(var.middlewares.headers.request.set) > 0 || length(var.middlewares.headers.request.remove) > 0
   has_resp_headers = length(var.middlewares.headers.response.set) > 0 || length(var.middlewares.headers.response.remove) > 0
   has_headers      = local.has_req_headers || local.has_resp_headers
-  has_middlewares   = local.is_auth_enabled || var.middlewares.rate_limit.enabled || var.middlewares.quota.enabled || local.has_headers
+  has_middlewares  = local.is_auth_enabled || var.middlewares.rate_limit.enabled || var.middlewares.quota.enabled || local.has_headers
+
+  # Application clientId must match a JWT claim that Gravitee uses for
+  # subscription lookup.  Gravitee resolves client_id from the JWT using
+  # the fallback chain: azp → aud → client_id.
+  #   jwt_hmac      — k6 generates tokens with client_id = "benchmark-app"
+  #   jwt_keycloak  — Keycloak tokens carry azp = "traefik" (the OIDC client)
+  jwt_app_client_id = (
+    var.middlewares.auth.type == "jwt_keycloak" ? "traefik" : "benchmark-app"
+  )
 
   # Map auth type to Gravitee plan security type
   plan_security = (
-    local.is_jwt_auth   ? "JWT" :
+    local.is_jwt_auth ? "JWT" :
     local.is_token_auth ? "API_KEY" :
     "KEY_LESS"
   )
 
-  # JWT security definition JSON for Gravitee JWT plans
+  # JWT security definition JSON for Gravitee JWT plans.
+  # clientIdClaim is set explicitly to avoid the default azp→aud→client_id
+  # fallback chain which can match the wrong claim (e.g. aud often contains
+  # a resource URL, not a client identifier — see gravitee-io/issues#3835).
   jwt_security_definition = (
     var.middlewares.auth.type == "jwt_hmac"
     ? jsonencode({
-        signature         = "HMAC_HS256"
-        publicKeyResolver = "GIVEN_KEY"
-        resolverParameter = "topsecretpassword-benchmark-hmac"
-      })
+      signature         = "HMAC_HS256"
+      publicKeyResolver = "GIVEN_KEY"
+      resolverParameter = "topsecretpassword-benchmark-hmac"
+      clientIdClaim     = "client_id"
+    })
     : var.middlewares.auth.type == "jwt_keycloak"
     ? jsonencode({
-        signature         = "RSA_RS256"
-        publicKeyResolver = "JWKS_URL"
-        resolverParameter = "http://keycloak-service.dependencies.svc:8080/realms/traefik/protocol/openid-connect/certs"
-      })
+      signature         = "RSA_RS256"
+      publicKeyResolver = "JWKS_URL"
+      resolverParameter = "http://keycloak-service.dependencies.svc:8080/realms/traefik/protocol/openid-connect/certs"
+      clientIdClaim     = "azp"
+    })
     : ""
   )
 }
@@ -42,7 +56,7 @@ locals {
 # conditions that occur when destroying + recreating with the same k8s name.
 # ---------------------------------------------------------------------------
 resource "kubectl_manifest" "api" {
-  yaml_body = <<YAML
+  yaml_body  = <<YAML
 apiVersion: gravitee.io/v1alpha1
 kind: ApiDefinition
 metadata:
@@ -67,10 +81,10 @@ spec:
   - name: "${local.plan_security}"
     description: "${local.plan_security}"
     security: "${local.plan_security}"
-%{ if local.is_jwt_auth ~}
+%{if local.is_jwt_auth~}
     securityDefinition: '${local.jwt_security_definition}'
-%{ endif ~}
-%{ if local.has_middlewares ~}
+%{endif~}
+%{if local.has_middlewares~}
     flows:
     - path-operator:
         path: "/"
@@ -96,48 +110,48 @@ spec:
             periodTime: ${floor(var.middlewares.quota.per / 3600)}
             limit: ${var.middlewares.quota.rate}
             periodTimeUnit: "HOURS"
-%{ if local.has_req_headers ~}
+%{if local.has_req_headers~}
       - name: "Request Headers"
         enabled: true
         policy: "transform-headers"
         configuration:
           scope: "REQUEST"
-%{ if length(var.middlewares.headers.request.set) > 0 ~}
+%{if length(var.middlewares.headers.request.set) > 0~}
           addHeaders:
-%{ for name, value in var.middlewares.headers.request.set ~}
+%{for name, value in var.middlewares.headers.request.set~}
           - name: "${name}"
             value: "${value}"
-%{ endfor ~}
-%{ endif ~}
-%{ if length(var.middlewares.headers.request.remove) > 0 ~}
+%{endfor~}
+%{endif~}
+%{if length(var.middlewares.headers.request.remove) > 0~}
           removeHeaders:
-%{ for name in var.middlewares.headers.request.remove ~}
+%{for name in var.middlewares.headers.request.remove~}
           - "${name}"
-%{ endfor ~}
-%{ endif ~}
-%{ endif ~}
-%{ if local.has_resp_headers ~}
+%{endfor~}
+%{endif~}
+%{endif~}
+%{if local.has_resp_headers~}
       post:
       - name: "Response Headers"
         enabled: true
         policy: "transform-headers"
         configuration:
           scope: "RESPONSE"
-%{ if length(var.middlewares.headers.response.set) > 0 ~}
+%{if length(var.middlewares.headers.response.set) > 0~}
           addHeaders:
-%{ for name, value in var.middlewares.headers.response.set ~}
+%{for name, value in var.middlewares.headers.response.set~}
           - name: "${name}"
             value: "${value}"
-%{ endfor ~}
-%{ endif ~}
-%{ if length(var.middlewares.headers.response.remove) > 0 ~}
+%{endfor~}
+%{endif~}
+%{if length(var.middlewares.headers.response.remove) > 0~}
           removeHeaders:
-%{ for name in var.middlewares.headers.response.remove ~}
+%{for name in var.middlewares.headers.response.remove~}
           - "${name}"
-%{ endfor ~}
-%{ endif ~}
-%{ endif ~}
-%{ endif ~}
+%{endfor~}
+%{endif~}
+%{endif~}
+%{endif~}
   proxy:
     virtual_hosts:
     - path: "/api-${count.index}"
@@ -174,7 +188,7 @@ spec:
   settings:
     app:
       type: "SIMPLE"
-      clientId: "benchmark-app"
+      clientId: "${local.jwt_app_client_id}"
 YAML
 
   depends_on = [helm_release.gravitee, helm_release.gravitee-operator, kubectl_manifest.gravitee-context]

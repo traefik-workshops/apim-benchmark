@@ -45,7 +45,7 @@ resource "kubernetes_service_v1" "fortio" {
     }
   }
   spec {
-    type     = "ClusterIP"
+    type = "ClusterIP"
     selector = {
       app = "fortio"
     }

@@ -47,18 +47,18 @@ metadata:
   namespace: ${var.namespace}
 spec:
   headers:
-%{ if length(local.request_headers) > 0 ~}
+%{if length(local.request_headers) > 0~}
     customRequestHeaders:
-%{ for name, value in local.request_headers ~}
+%{for name, value in local.request_headers~}
       ${name}: "${value}"
-%{ endfor ~}
-%{ endif ~}
-%{ if length(local.response_headers) > 0 ~}
+%{endfor~}
+%{endif~}
+%{if length(local.response_headers) > 0~}
     customResponseHeaders:
-%{ for name, value in local.response_headers ~}
+%{for name, value in local.response_headers~}
       ${name}: "${value}"
-%{ endfor ~}
-%{ endif ~}
+%{endfor~}
+%{endif~}
 YAML
 
   count      = local.has_headers ? 1 : 0

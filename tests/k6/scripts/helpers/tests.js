@@ -145,12 +145,19 @@ const encode = (payload, secret) => {
 
 const generateJWTHMACKeys = (keyCount) => {
   const keys = [];
-  const secret = "topsecretpassword";
+  // Must match the HMAC secret configured in each provider's Terraform:
+  //   Kong:     middlewares.tf  → kong-jwt-hmac secret
+  //   Tyk:      ingress.tf     → jwt_source (base64-encoded)
+  //   Gravitee: ingress.tf     → resolverParameter
+  const secret = "topsecretpassword-benchmark-hmac";
 
   for (let i = 0; i < keyCount; i++) {
     const now = Math.floor(Date.now() / 1000);
     keys.push(encode({
       sub: 'user' + i % 100 + '@test.com',
+      // client_id is required by Gravitee for JWT subscription lookup
+      // (matches Application.settings.app.clientId = "benchmark-app")
+      client_id: 'benchmark-app',
       iat: now,
       exp: now + 86400,
       iss: "k6",

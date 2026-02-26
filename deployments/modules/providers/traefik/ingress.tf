@@ -4,11 +4,11 @@ locals {
     local.has_headers ? "- name: headers" : "",
   ])
   middlewares_block = length(local.middleware_refs) > 0 ? "middlewares:\n    ${join("\n    ", local.middleware_refs)}" : ""
-  tls_block = var.middlewares.tls.enabled ? "\n  tls:\n    secretName: gateway-tls-cert" : ""
+  tls_block         = var.middlewares.tls.enabled ? "\n  tls:\n    secretName: gateway-tls-cert" : ""
 }
 
 resource "kubectl_manifest" "api" {
-  yaml_body = <<YAML
+  yaml_body  = <<YAML
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:

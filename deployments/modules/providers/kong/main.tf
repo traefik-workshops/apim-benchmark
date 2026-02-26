@@ -50,7 +50,7 @@ resource "helm_release" "kong" {
       # --- Controller (KIC) ---------------------------------------------------
       controller = {
         ingressController = {
-          enabled = true
+          enabled         = true
           watchNamespaces = [var.namespace]
           gatewayDiscovery = {
             enabled                 = true
@@ -97,7 +97,7 @@ resource "helm_release" "kong" {
 
         proxy = merge({
           type = var.service.type
-        }, var.middlewares.tls.enabled ? {
+          }, var.middlewares.tls.enabled ? {
           tls = {
             enabled       = true
             containerPort = 8443

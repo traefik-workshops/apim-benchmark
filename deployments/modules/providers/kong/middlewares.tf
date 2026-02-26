@@ -139,6 +139,11 @@ resource "kubernetes_secret_v1" "kong-jwt-hmac" {
 }
 
 # JWT consumer + Keycloak RSA credential (jwt_keycloak)
+# Kong's OSS JWT plugin does not support JWKS URL — the RSA public key must be
+# provided in PEM format. A null_resource fetches it from Keycloak at apply
+# time via a temporary in-cluster pod, then creates the credential Secret
+# directly with kubectl (bypassing the Terraform state for this one Secret so
+# the PEM value never needs to be stored in tfstate).
 resource "kubectl_manifest" "kong-jwt-keycloak-consumer" {
   yaml_body = <<YAML
 apiVersion: configuration.konghq.com/v1
@@ -154,25 +159,49 @@ credentials:
 YAML
 
   count      = var.middlewares.auth.type == "jwt_keycloak" ? 1 : 0
-  depends_on = [helm_release.kong, kubernetes_secret_v1.kong-jwt-keycloak]
+  depends_on = [helm_release.kong, null_resource.kong_keycloak_credential]
 }
 
-resource "kubernetes_secret_v1" "kong-jwt-keycloak" {
-  metadata {
-    name      = "keycloak-jwt-credential"
-    namespace = var.namespace
-    labels = {
-      "konghq.com/credential" = "jwt"
-    }
+resource "null_resource" "kong_keycloak_credential" {
+  count = var.middlewares.auth.type == "jwt_keycloak" ? 1 : 0
+
+  provisioner "local-exec" {
+    interpreter = ["bash", "-c"]
+    command     = <<-SCRIPT
+      set -euo pipefail
+
+      # Fetch Keycloak RSA public key via a temporary in-cluster pod.
+      RAW=$(kubectl run keycloak-pk-fetch-$RANDOM \
+        -n dependencies --rm -i --restart=Never --quiet \
+        --image=curlimages/curl -- \
+        curl -sf http://keycloak-service.dependencies.svc:8080/realms/traefik 2>/dev/null)
+
+      PEM=$(echo "$RAW" | python3 -c "
+import sys, json, textwrap
+pk = json.loads(sys.stdin.read())['public_key']
+wrapped = textwrap.fill(pk, 64)
+print(f'-----BEGIN PUBLIC KEY-----\n{wrapped}\n-----END PUBLIC KEY-----')
+")
+
+      # Create / replace the credential Secret so Kong can verify RS256 JWTs.
+      kubectl delete secret keycloak-jwt-credential \
+        -n ${var.namespace} --ignore-not-found
+
+      kubectl create secret generic keycloak-jwt-credential \
+        -n ${var.namespace} \
+        --from-literal=key='http://keycloak-service.dependencies.svc:8080/realms/traefik' \
+        --from-literal=algorithm=RS256 \
+        --from-literal="rsa_public_key=$PEM"
+
+      kubectl label secret keycloak-jwt-credential \
+        -n ${var.namespace} konghq.com/credential=jwt
+    SCRIPT
   }
 
-  data = {
-    key              = "http://keycloak-service.dependencies.svc:8080/realms/traefik"
-    algorithm        = "RS256"
-    rsa_public_key   = ""
+  triggers = {
+    auth_type = var.middlewares.auth.type
   }
 
-  count      = var.middlewares.auth.type == "jwt_keycloak" ? 1 : 0
   depends_on = [kubernetes_namespace.kong]
 }
 
@@ -180,7 +209,7 @@ resource "kubernetes_secret_v1" "kong-jwt-keycloak" {
 # Rate Limiting
 # ---------------------------------------------------------------------------
 resource "kubectl_manifest" "rate-limit-plugin" {
-  yaml_body = <<YAML
+  yaml_body  = <<YAML
 apiVersion: configuration.konghq.com/v1
 kind: KongPlugin
 metadata:
@@ -255,7 +284,7 @@ YAML
 # Observability — Prometheus
 # ---------------------------------------------------------------------------
 resource "kubectl_manifest" "prometheus-plugin" {
-  yaml_body = <<YAML
+  yaml_body  = <<YAML
 apiVersion: configuration.konghq.com/v1
 kind: KongPlugin
 metadata:
@@ -272,7 +301,7 @@ YAML
 # Observability — OpenTelemetry
 # ---------------------------------------------------------------------------
 resource "kubectl_manifest" "opentelemetry-plugin" {
-  yaml_body = <<YAML
+  yaml_body  = <<YAML
 apiVersion: configuration.konghq.com/v1
 kind: KongPlugin
 metadata:

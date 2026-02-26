@@ -85,18 +85,18 @@ resource "helm_release" "tyk" {
                 name = "tyk-api-definitions"
               }
             }
-          ],
-          local.is_jwt_auth ? [{
-            name = "tyk-policies"
-            configMap = {
+            ],
+            local.is_jwt_auth ? [{
               name = "tyk-policies"
-            }
-          }] : [],
-          var.middlewares.tls.enabled ? [{
-            name = "tls-cert"
-            secret = {
-              secretName = "gateway-tls-cert"
-            }
+              configMap = {
+                name = "tyk-policies"
+              }
+            }] : [],
+            var.middlewares.tls.enabled ? [{
+              name = "tls-cert"
+              secret = {
+                secretName = "gateway-tls-cert"
+              }
           }] : [])
           extraVolumeMounts = concat([
             {
@@ -104,16 +104,16 @@ resource "helm_release" "tyk" {
               mountPath = "/mnt/tyk-gateway/apps"
               readOnly  = true
             }
-          ],
-          local.is_jwt_auth ? [{
-            name      = "tyk-policies"
-            mountPath = "/mnt/tyk-gateway/policies"
-            readOnly  = true
-          }] : [],
-          var.middlewares.tls.enabled ? [{
-            name      = "tls-cert"
-            mountPath = "/mnt/tls"
-            readOnly  = true
+            ],
+            local.is_jwt_auth ? [{
+              name      = "tyk-policies"
+              mountPath = "/mnt/tyk-gateway/policies"
+              readOnly  = true
+            }] : [],
+            var.middlewares.tls.enabled ? [{
+              name      = "tls-cert"
+              mountPath = "/mnt/tls"
+              readOnly  = true
           }] : [])
 
           tykConfig = merge(
@@ -122,9 +122,9 @@ resource "helm_release" "tyk" {
               enable_detailed_recording             = var.middlewares.observability.logs.enabled
               hash_keys                             = false
               enable_jsvm                           = false
-              enable_non_transactional_rate_limiter  = true
+              enable_non_transactional_rate_limiter = true
               close_connections                     = false
-              max_idle_connections_per_host          = 1000
+              max_idle_connections_per_host         = 1000
               app_path                              = "/mnt/tyk-gateway/apps"
             },
 

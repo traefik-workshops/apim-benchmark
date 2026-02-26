@@ -35,10 +35,10 @@ locals {
 # Envoy Gateway (installs Gateway API CRDs automatically)
 # ---------------------------------------------------------------------------
 resource "helm_release" "envoygateway" {
-  name             = "envoy-gateway"
-  repository       = "oci://docker.io/envoyproxy"
-  chart            = "gateway-helm"
-  version          = var.gateway_version
+  name       = "envoy-gateway"
+  repository = "oci://docker.io/envoyproxy"
+  chart      = "gateway-helm"
+  version    = var.gateway_version
 
   namespace        = var.namespace
   atomic           = true
@@ -95,7 +95,7 @@ resource "kubernetes_service" "envoy_proxy" {
 
     selector = {
       "gateway.envoyproxy.io/owning-gateway-name"      = "envoy-gateway"
-      "gateway.envoyproxy.io/owning-gateway-namespace"  = var.namespace
+      "gateway.envoyproxy.io/owning-gateway-namespace" = var.namespace
     }
 
     port {

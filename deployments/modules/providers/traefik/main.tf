@@ -52,18 +52,18 @@ resource "helm_release" "traefik" {
   repository = "https://traefik.github.io/charts"
   chart      = "traefik"
 
-  namespace  = var.namespace
-  atomic     = true
-  wait       = true
-  skip_crds  = true
+  namespace = var.namespace
+  atomic    = true
+  wait      = true
+  skip_crds = true
 
   values = [
     yamlencode(merge({
       image = var.traefik_hub_token != "" ? {
-        registry = "ghcr.io"
+        registry   = "ghcr.io"
         repository = "traefik/traefik-hub"
-        tag = "v3.19.0"
-      } : {
+        tag        = "v3.19.0"
+        } : {
         tag = var.gateway_version
       }
 
@@ -83,7 +83,7 @@ resource "helm_release" "traefik" {
             default = true
           }
         }
-      }, var.middlewares.tls.enabled ? {
+        }, var.middlewares.tls.enabled ? {
         websecure = {
           expose = {
             default = true
@@ -118,7 +118,7 @@ resource "helm_release" "traefik" {
         }
         access = merge({
           enabled = var.middlewares.observability.logs.enabled
-        }, var.middlewares.observability.logs.enabled && var.middlewares.observability.logs.exporter == "otlp" ? {
+          }, var.middlewares.observability.logs.enabled && var.middlewares.observability.logs.exporter == "otlp" ? {
           otlp = {
             enabled = true
             http = {
@@ -189,7 +189,7 @@ resource "helm_release" "traefik" {
       nodeSelector = {
         node = var.taint
       }
-    }, var.traefik_hub_token != "" ? {
+      }, var.traefik_hub_token != "" ? {
       hub = {
         token   = "traefik-hub-license"
         offline = true

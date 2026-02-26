@@ -3,7 +3,7 @@ variable "namespace" {
 }
 
 variable "service" {
-  type    = object({
+  type = object({
     route_count = number
     app_count   = number
     host_count  = number
