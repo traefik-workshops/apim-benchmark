@@ -1,0 +1,11 @@
+cluster_provider = "aks"
+cluster_location = "westus2"
+cluster_node_type = "Standard_D4s_v3"
+resource_group_name = "benchmark-rg"
+
+apim_providers = ["traefik", "kong", "tyk", "gravitee", "envoygateway", "upstream"]
+
+apim_provider_node_count = 1
+upstream_node_count      = 1
+loadgen_node_count       = 1
+dependencies_node_count  = 1

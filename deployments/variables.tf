@@ -54,32 +54,40 @@ variable "apim_providers" {
       enabled = bool
       version = string
     })
-    tyk = object({ 
+    tyk = object({
       enabled = bool
       version = string
     })
-})
+    envoygateway = object({
+      enabled = bool
+      version = string
+    })
+  })
 
   default = {
     gravitee = {
       enabled = false
-      version = ""
+      version = "4.10"
     }
-    kong = { 
+    kong = {
       enabled = false
-      version = ""
+      version = "3.9"
     }
-    traefik = { 
+    traefik = {
       enabled = true
-      version = "v3.5.2"
+      version = "v3.6.8"
     }
-    tyk = { 
+    tyk = {
       enabled = false
-      version = ""
+      version = "v5.8"
+    }
+    envoygateway = {
+      enabled = false
+      version = "v1.3.0"
     }
   }
 
-  description = "A list of proivder objects that define the providers to be deployed."
+  description = "A list of provider objects that define the providers to be deployed."
 }
 
 variable "apim_providers_deployment" {
@@ -149,10 +157,9 @@ variable "apim_providers_route_count" {
 }
 
 variable "apim_providers_middlewares" {
-  type = object({ 
+  type = object({
     auth = object({
-      enabled   = bool
-      type      = string
+      type      = string # "disabled" | "token_postgres" | "token_iac" | "jwt_hmac" | "jwt_keycloak"
       app_count = number
     })
     quota = object({
@@ -165,18 +172,31 @@ variable "apim_providers_middlewares" {
       rate    = number
       per     = number
     })
+    tls = object({
+      enabled = bool
+    })
+    headers = object({
+      request = object({
+        set    = map(string)
+        remove = list(string)
+      })
+      response = object({
+        set    = map(string)
+        remove = list(string)
+      })
+    })
     observability = object({
       logs = object({
         enabled  = bool
-        exporter = string
+        exporter = string # "otlp" | "stdout"
       })
       metrics = object({
         enabled  = bool
-        exporter = string
+        exporter = string # "otlp" | "prometheus"
       })
       traces = object({
         enabled  = bool
-        exporter = string
+        exporter = string # "otlp"
         ratio    = string
       })
     })
@@ -184,8 +204,7 @@ variable "apim_providers_middlewares" {
 
   default = {
     auth = {
-      enabled   = false
-      type      = ""
+      type      = "disabled"
       app_count = 1
     }
     quota = {
@@ -197,6 +216,19 @@ variable "apim_providers_middlewares" {
       enabled = false
       rate    = 1
       per     = 1
+    }
+    tls = {
+      enabled = false
+    }
+    headers = {
+      request = {
+        set    = {}
+        remove = []
+      }
+      response = {
+        set    = {}
+        remove = []
+      }
     }
     observability = {
       logs = {
@@ -215,7 +247,7 @@ variable "apim_providers_middlewares" {
     }
   }
 
-  description = "Middleware description for providers."
+  description = "Middleware configuration for all APIM providers."
 }
 
 variable "node_taints" {
@@ -232,33 +264,74 @@ variable "node_taints" {
     traefik            = string
     traefik-upstream   = string
     traefik-loadgen    = string
-    tyk                = string
-    tyk-upstream       = string
-    tyk-loadgen        = string
+    tyk                     = string
+    tyk-upstream            = string
+    tyk-loadgen             = string
+    envoygateway            = string
+    envoygateway-upstream   = string
+    envoygateway-loadgen    = string
   })
 
   default = {
-    dependencies       = "dependencies"
-    upstream           = "upstream"
-    upstream-loadgen   = "upstream-loadgen"
-    gravitee           = "gravitee"
-    gravitee-upstream  = "gravitee-upstream"
-    gravitee-loadgen   = "gravitee-loadgen"
-    kong               = "kong"
-    kong-upstream      = "kong-upstream"
-    kong-loadgen       = "kong-loadgen"
-    traefik            = "traefik"
-    traefik-upstream   = "traefik-upstream"
-    traefik-loadgen    = "traefik-loadgen"
-    tyk                = "tyk"
-    tyk-upstream       = "tyk-upstream"
-    tyk-loadgen        = "tyk-loadgen"
+    dependencies            = "dependencies"
+    upstream                = "upstream"
+    upstream-loadgen        = "upstream-loadgen"
+    gravitee                = "gravitee"
+    gravitee-upstream       = "gravitee-upstream"
+    gravitee-loadgen        = "gravitee-loadgen"
+    kong                    = "kong"
+    kong-upstream           = "kong-upstream"
+    kong-loadgen            = "kong-loadgen"
+    traefik                 = "traefik"
+    traefik-upstream        = "traefik-upstream"
+    traefik-loadgen         = "traefik-loadgen"
+    tyk                     = "tyk"
+    tyk-upstream            = "tyk-upstream"
+    tyk-loadgen             = "tyk-loadgen"
+    envoygateway            = "envoygateway"
+    envoygateway-upstream   = "envoygateway-upstream"
+    envoygateway-loadgen    = "envoygateway-loadgen"
   }
   description = "Mapping for node labels to determine the values for node selectors for each deployment."
+}
+
+# ---------------------------------------------------------------------------
+# Domain & Dependencies
+# ---------------------------------------------------------------------------
+
+variable "domain" {
+  type        = string
+  default     = "benchmarks.demo.traefik.ai"
+  description = "Base domain for DNS and ingress."
+}
+
+variable "dependencies_service_type" {
+  type        = string
+  default     = "LoadBalancer"
+  description = "Service type for the dependencies Traefik instance."
+}
+
+variable "dns_traefiker" {
+  type = object({
+    enabled = bool
+    chart   = string
+  })
+  default = {
+    enabled = false
+    chart   = ""
+  }
+  description = "DNS Traefiker configuration for automatic Cloudflare DNS registration."
 }
 
 variable "grafana_service_type" {
   type        = string
   default     = "ClusterIP"
-  description = "Grafana Dashboard service type. Set to 'LoadBalancer' type to be able to access Dashboard over the internet."
+  description = "Service type for the Grafana instance."
+}
+
+variable "traefik_hub_token" {
+  type        = string
+  default     = ""
+  sensitive   = true
+  description = "Traefik Hub license token for API Gateway features."
 }

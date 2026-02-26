@@ -1,6 +1,6 @@
 resource "kubernetes_deployment" "fortio" {
   metadata {
-    name      = "fortio"
+    name      = "fortio-upstream"
     namespace = var.namespace
   }
   spec {

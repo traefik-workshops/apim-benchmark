@@ -13,9 +13,15 @@ variable "apim_providers" {
   default     = ["traefik", "upstream"]
   description = "APIM providers"
   validation {
-    condition     = length([for p in var.apim_providers : p if contains(["kong", "traefik", "tyk", "gravitee", "upstream"], p)]) == length(var.apim_providers)
-    error_message = "All providers must be one of: kong, traefik, tyk, gravitee, upstream"
+    condition     = length([for p in var.apim_providers : p if contains(["kong", "traefik", "tyk", "gravitee", "envoygateway", "upstream"], p)]) == length(var.apim_providers)
+    error_message = "All providers must be one of: kong, traefik, tyk, gravitee, envoygateway, upstream"
   }
+}
+
+variable "cluster_location" {
+  type        = string
+  default     = ""
+  description = "Cloud region/zone for the cluster (e.g. us-west-1 for EKS, us-west1-a for GKE)."
 }
 
 variable "cluster_node_type" {
@@ -26,6 +32,21 @@ variable "cluster_node_type" {
     condition     = var.cluster_provider == "k3d" || var.cluster_node_type != ""
     error_message = "cluster_node_type is required for ${var.cluster_provider}"
   }
+}
+
+# ---------------------------------------------------------------------------
+# Cloud-specific optional variables
+# ---------------------------------------------------------------------------
+variable "resource_group_name" {
+  type        = string
+  default     = "benchmark-rg"
+  description = "Azure resource group name (AKS only)."
+}
+
+variable "compartment_id" {
+  type        = string
+  default     = ""
+  description = "Oracle Cloud compartment ID (OKE only)."
 }
 
 variable "apim_provider_node_type" {

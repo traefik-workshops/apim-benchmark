@@ -146,7 +146,7 @@ spec:
       node: ${var.name}-tests
     env:
     - name: K6_PROMETHEUS_RW_SERVER_URL
-      value: http://prometheus-server.dependencies.svc:80/api/v1/write
+      value: http://prometheus-kube-prometheus-prometheus.dependencies.svc:9090/api/v1/write
     - name: K6_PROMETHEUS_RW_TREND_STATS
       value: p(75),p(90),p(95),p(99)
   script:

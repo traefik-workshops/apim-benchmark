@@ -8,8 +8,15 @@ terraform {
 }
 
 locals {
-  redis-pass = "topsecretpassword"
-  redis-port = "6379"
+  redis_pass = "topsecretpassword"
+  redis_port = "6379"
+
+  tolerations = [{
+    key      = "node"
+    operator = "Equal"
+    value    = var.taint
+    effect   = "NoSchedule"
+  }]
 }
 
 resource "kubernetes_namespace" "kong" {
@@ -18,165 +25,107 @@ resource "kubernetes_namespace" "kong" {
   }
 }
 
+module "upstream" {
+  source        = "../../dependencies/upstream"
+  namespace     = var.namespace
+  taint         = var.upstream_taint
+  service_count = var.service.count
+
+  depends_on = [kubernetes_namespace.kong]
+}
+
 resource "helm_release" "kong" {
   name       = "kong"
   repository = "https://charts.konghq.com"
   chart      = "ingress"
-  version    = "0.13.1"
+  version    = "0.22.0"
 
   namespace = var.namespace
   atomic    = true
+  wait      = true
+  timeout   = 600
 
-  set {
-    name  = "gateway.image.tag"
-    value = var.gateway_version
-  }
+  values = [
+    yamlencode({
+      # --- Controller (KIC) ---------------------------------------------------
+      controller = {
+        ingressController = {
+          enabled = true
+          watchNamespaces = [var.namespace]
+          gatewayDiscovery = {
+            enabled                 = true
+            generateAdminApiService = true
+          }
+        }
+        deployment = {
+          kong = {
+            enabled = false
+          }
+        }
+        nodeSelector = {
+          node = var.taint
+        }
+        tolerations = local.tolerations
+        resources   = {}
+      }
 
-  #############################################################################
-  # Performance
-  #############################################################################
+      # --- Gateway (data plane) ------------------------------------------------
+      gateway = {
+        enabled = true
+        image = {
+          tag = var.gateway_version
+        }
 
-  set {
-    name  = "gateway.env.nginx_worker_processes"
-    value = "auto"
-  }
+        replicaCount = var.deployment.replica_count
 
-  set {
-    name  = "gateway.env.nginx_main_worker_rlimit_nofile"
-    value = "auto"
-  }
+        env = {
+          role                            = "traditional"
+          database                        = "off"
+          nginx_worker_processes          = "auto"
+          upstream_keepalive_max_requests = "999999"
+          nginx_http_keepalive_requests   = "999999"
+          proxy_access_log                = var.middlewares.observability.logs.enabled ? "/dev/stdout" : "off"
+          tracing_instrumentations        = var.middlewares.observability.traces.enabled ? "all" : "off"
+          tracing_sampling_rate           = var.middlewares.observability.traces.enabled ? var.middlewares.observability.traces.ratio : "0"
+        }
 
-  set {
-    name  = "gateway.env.nginx_events_worker_connections"
-    value = "auto"
-  }
+        admin = {
+          enabled   = true
+          type      = "ClusterIP"
+          clusterIP = "None"
+        }
 
-  set {
-    name  = "gateway.env.upstream_keepalive_max_requests"
-    value = "999999"
-  }
+        proxy = merge({
+          type = var.service.type
+        }, var.middlewares.tls.enabled ? {
+          tls = {
+            enabled       = true
+            containerPort = 8443
+            servicePort   = 443
+          }
+        } : {})
 
-  set {
-    name  = "gateway.env.nginx_http_keepalive_requests"
-    value = "999999"
-  }
+        ingressController = {
+          enabled = false
+        }
 
-  set {
-    name  = "gateway.env.proxy_access_log"
-    value = "off"
-  }
+        service = {
+          type = var.service.type
+        }
 
-  set {
-    name  = "gateway.deployment.daemonset"
-    value = var.deployment_type == "DaemonSet" ? true : false
-  }
+        resources = var.deployment.resources.requests.cpu != "0" ? {
+          requests = var.deployment.resources.requests
+          limits   = var.deployment.resources.limits
+        } : {}
 
+        tolerations = local.tolerations
 
-  set {
-    name  = "gateway.service.type"
-    value = var.service_type
-  }
+        nodeSelector = {
+          node = var.taint
+        }
+      }
+    })
+  ]
 
-  set {
-    name  = "gateway.replicaCount"
-    value = var.replica_count
-  }
-
-  set {
-    name  = "gateway.resources.requests.cpu"
-    value = var.resources.requests.cpu
-  }
-
-  set {
-    name  = "gateway.resources.requests.memory"
-    value = var.resources.requests.memory
-  }
-
-  set {
-    name  = "gateway.resources.limits.cpu"
-    value = var.resources.limits.cpu
-  }
-
-  set {
-    name  = "gateway.resources.limits.memory"
-    value = var.resources.limits.memory
-  }
-
-  #############################################################################
-  # Database
-  #############################################################################
-
-  set {
-    name  = "gateway.postgresql.enabled"
-    value = "true"
-  }
-
-  set {
-    name  = "gateway.postgresql.primary.nodeSelector.node"
-    value = var.resources-label
-  }
-
-  set {
-    name  = "gateway.env.database"
-    value = "postgres"
-  }
-
-  #############################################################################
-  # Kong Open Telemetry
-  #############################################################################
-  set {
-    name  = "gateway.env.tracing_instrumentations"
-    value = var.open_telemetry.enabled ? "all" : "off"
-  }
-
-  set {
-    name  = "gateway.env.tracing_sampling_rate"
-    value = var.open_telemetry.enabled ? var.open_telemetry.sampling_ratio : "0"
-  }
-
-  #############################################################################
-  # Kong services
-  #############################################################################
-
-  set {
-    name  = "gateway.proxy.type"
-    value = "ClusterIP"
-  }
-
-  set {
-    name  = "gateway.admin.enabled"
-    value = "true"
-  }
-
-  set {
-    name  = "gateway.admin.type"
-    value = "ClusterIP"
-  }
-
-  set {
-    name  = "gateway.ingressController.enabled"
-    value = "false"
-  }
-
-  set {
-    name  = "gateway.portal.enabled"
-    value = "false"
-  }
-
-  set {
-    name  = "gateway.portalapi.enabled"
-    value = "false"
-  }
-
-  set {
-    name  = "gateway.nodeSelector.node"
-    value = var.label
-  }
-
-  set {
-    name  = "controller.nodeSelector.node"
-    value = var.resources-label
-  }
-
-  depends_on = [helm_release.kong-redis, kubectl_manifest.kong_gateway]
+  depends_on = [module.redis, module.upstream]
 }

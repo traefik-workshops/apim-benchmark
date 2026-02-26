@@ -5,5 +5,11 @@
 **/terraform.tfstate
 **/terraform.tfstate.backup
 **/terraform.cloud.tf
-**/*.tfvars
 **/.idea
+
+# Ignore sensitive tfvars but track the default k3d configs
+**/*.auto.tfvars
+**/secret.tfvars
+**/secrets.tfvars
+
+**/.claude*

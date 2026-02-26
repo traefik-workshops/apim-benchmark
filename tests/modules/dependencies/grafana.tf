@@ -41,7 +41,7 @@ resource "helm_release" "grafana" {
 
   set {
     name  = "datasources.datasources\\.yaml.datasources[0].url"
-    value = "http://prometheus-server.dependencies.svc"
+    value = "http://prometheus-kube-prometheus-prometheus.dependencies.svc:9090"
   }
 
   set {

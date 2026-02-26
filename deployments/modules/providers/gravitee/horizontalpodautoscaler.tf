@@ -5,22 +5,22 @@ resource "kubernetes_horizontal_pod_autoscaler_v2" "gravitee-hpa" {
   }
 
   spec {
-    min_replicas = var.replica_count
-    max_replicas = var.hpa.max_replica_count
+    min_replicas = var.deployment.replica_count
+    max_replicas = var.deployment.hpa.max_replica_count
 
     scale_target_ref {
       api_version = "apps/v1"
-      kind        = var.deployment_type
+      kind        = var.deployment.type
       name        = "gravitee-apim-gateway"
     }
-    
+
     metric {
       type = "Resource"
       resource {
         name = "cpu"
         target {
           type                = "Utilization"
-          average_utilization = var.hpa.avg_cpu_util_percentage
+          average_utilization = var.deployment.hpa.avg_cpu_util_percentage
         }
       }
     }
@@ -28,7 +28,7 @@ resource "kubernetes_horizontal_pod_autoscaler_v2" "gravitee-hpa" {
     behavior {
       scale_up {
         stabilization_window_seconds = 0
-        select_policy = "Max"
+        select_policy                = "Max"
         policy {
           type           = "Pods"
           value          = 1
@@ -38,6 +38,6 @@ resource "kubernetes_horizontal_pod_autoscaler_v2" "gravitee-hpa" {
     }
   }
 
-  count      = var.hpa.enabled ? 1 : 0
+  count      = var.deployment.hpa.enabled ? 1 : 0
   depends_on = [helm_release.gravitee]
 }

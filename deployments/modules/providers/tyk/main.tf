@@ -7,317 +7,167 @@ terraform {
   }
 }
 
-locals {
-  pgsql-name = "tyk-database"
-  pgsql-user = "tyk"
-  pgsql-pass = "topsecretpassword"
-  pgsql-port = "5432"
-  redis-pass = "topsecretpassword"
-  redis-port = "6379"
-}
-
 resource "kubernetes_namespace" "tyk" {
   metadata {
     name = var.namespace
   }
 }
 
+module "upstream" {
+  source        = "../../dependencies/upstream"
+  namespace     = var.namespace
+  taint         = var.upstream_taint
+  service_count = var.service.count
+
+  depends_on = [kubernetes_namespace.tyk]
+}
+
+locals {
+  tolerations = [{
+    key      = "node"
+    operator = "Equal"
+    value    = var.taint
+    effect   = "NoSchedule"
+  }]
+}
+
+# ---------------------------------------------------------------------------
+# Tyk OSS Gateway (no license, no dashboard, no operator)
+# ---------------------------------------------------------------------------
 resource "helm_release" "tyk" {
   name       = "tyk"
   repository = "https://helm.tyk.io/public/helm/charts"
-  chart      = "tyk-stack"
+  chart      = "tyk-oss"
 
   namespace = var.namespace
   atomic    = true
+  wait      = true
+  timeout   = 300
 
-  set {
-    name  = "global.adminUser.email"
-    value = "default@example.com"
-  }
+  values = [
+    yamlencode({
+      global = {
+        redis = {
+          addrs = ["${local.redis_name}.${var.namespace}.svc:${local.redis_port}"]
+          pass  = local.redis_pass
+        }
+        storageType = "redis"
+        components = {
+          pump = false
+        }
+      }
 
-  set {
-    name  = "global.adminUser.password"
-    value = "topsecretpassword"
-  }
+      "tyk-gateway" = {
+        gateway = {
+          image = {
+            tag = var.gateway_version
+          }
+          kind         = var.deployment.type
+          replicaCount = var.deployment.replica_count
+          service = {
+            type                  = var.service.type
+            externalTrafficPolicy = var.service.external_traffic_policy
+          }
+          resources = var.deployment.resources.requests.cpu != "0" ? {
+            requests = var.deployment.resources.requests
+            limits   = var.deployment.resources.limits
+          } : {}
 
-  set {
-    name  = "global.storageType"
-    value = "postgres"
-  }
+          nodeSelector = {
+            node = var.taint
+          }
+          tolerations = local.tolerations
 
-  set {
-    name  = "global.license.dashboard"
-    value = var.license
-  }
+          extraVolumes = concat([
+            {
+              name = "tyk-api-definitions"
+              configMap = {
+                name = "tyk-api-definitions"
+              }
+            }
+          ],
+          local.is_jwt_auth ? [{
+            name = "tyk-policies"
+            configMap = {
+              name = "tyk-policies"
+            }
+          }] : [],
+          var.middlewares.tls.enabled ? [{
+            name = "tls-cert"
+            secret = {
+              secretName = "gateway-tls-cert"
+            }
+          }] : [])
+          extraVolumeMounts = concat([
+            {
+              name      = "tyk-api-definitions"
+              mountPath = "/mnt/tyk-gateway/apps"
+              readOnly  = true
+            }
+          ],
+          local.is_jwt_auth ? [{
+            name      = "tyk-policies"
+            mountPath = "/mnt/tyk-gateway/policies"
+            readOnly  = true
+          }] : [],
+          var.middlewares.tls.enabled ? [{
+            name      = "tls-cert"
+            mountPath = "/mnt/tls"
+            readOnly  = true
+          }] : [])
 
-  set {
-    name  = "global.license.operator"
-    value = var.license
-  }
+          tykConfig = merge(
+            {
+              enable_analytics                      = var.middlewares.observability.metrics.enabled
+              enable_detailed_recording             = var.middlewares.observability.logs.enabled
+              hash_keys                             = false
+              enable_jsvm                           = false
+              enable_non_transactional_rate_limiter  = true
+              close_connections                     = false
+              max_idle_connections_per_host          = 1000
+              app_path                              = "/mnt/tyk-gateway/apps"
+            },
 
-  set {
-    name  = "global.postgres.host"
-    value = "${helm_release.tyk-pgsql.name}-postgresql"
-  }
+            # --- JWT policies file path ------------------------------------------
+            local.is_jwt_auth ? {
+              policies = {
+                policy_source = "file"
+                policy_path   = "/mnt/tyk-gateway/policies"
+              }
+            } : {},
 
-  set {
-    name  = "global.postgres.port"
-    value = local.pgsql-port
-  }
+            # --- TLS termination ------------------------------------------------
+            var.middlewares.tls.enabled ? {
+              http_server_options = {
+                use_ssl = true
+                certificates = [{
+                  cert_file = "/mnt/tls/tls.crt"
+                  key_file  = "/mnt/tls/tls.key"
+                }]
+              }
+            } : {},
 
-  set {
-    name  = "global.postgres.database"
-    value = local.pgsql-name
-  }
+            # --- OpenTelemetry tracing ------------------------------------------
+            var.middlewares.observability.traces.enabled ? {
+              opentelemetry = {
+                enabled  = true
+                exporter = "grpc"
+                endpoint = "opentelemetry-collector.dependencies.svc:4317"
+                sampling = {
+                  type = "TraceIDRatioBased"
+                  rate = var.middlewares.observability.traces.ratio
+                }
+              }
+            } : {},
+          )
+        }
+      }
+    })
+  ]
 
-  set {
-    name  = "global.postgres.password"
-    value = local.pgsql-pass
-  }
-
-  set {
-    name  = "global.postgres.sslmode"
-    value = "disable"
-  }
-
-  set {
-    name  = "global.redis.addrs[0]"
-    value = "${helm_release.tyk-redis.name}-redis-cluster.${var.namespace}.svc:${local.redis-port}"
-  }
-
-  set {
-    name  = "global.redis.pass"
-    value = local.redis-pass
-  }
-
-  set {
-    name  = "global.redis.enableCluster"
-    value = true
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.image.tag"
-    value = var.gateway_version
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.kind"
-    value = var.deployment_type
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.service.type"
-    value = var.service_type
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.replicaCount"
-    value = var.replica_count
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.service.externalTrafficPolicy"
-    value = var.external_traffic_policy
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.resources.requests.cpu"
-    value = var.resources.requests.cpu
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.resources.requests.memory"
-    value = var.resources.requests.memory
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.resources.limits.cpu"
-    value = var.resources.limits.cpu
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.resources.limits.memory"
-    value = var.resources.limits.memory
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[0].name"
-    value = "GOGC"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[0].value"
-    type  = "string"
-    value = var.go_gc
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[1].name"
-    value = "GOMAXPROCS"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[1].value"
-    type  = "string"
-    value = var.go_max_procs
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[2].name"
-    value = "GOMEMLIMIT"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[2].value"
-    value = var.resources.limits.memory != "0" ? "${var.resources.limits.memory}B" : ""
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[3].name"
-    value = "TYK_GW_MAXIDLECONNSPERHOST"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[3].value"
-    type  = "string"
-    value = "1000"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[4].name"
-    value = "TYK_GW_MAXIDLECONNSPERHOST"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[4].value"
-    type  = "string"
-    value = "10000"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[5].name"
-    value = "TYK_GW_ANALYTICSCONFIG_ENABLEMULTIPLEANALYTICSKEYS"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[5].value"
-    type  = "string"
-    value = "true"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[6].name"
-    value = "TYK_GW_ANALYTICSCONFIG_SERIALIZERTYPE"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[6].value"
-    value = "protobuf"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[7].name"
-    value = "TYK_GW_STORAGE_MAXACTIVE"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[7].value"
-    type  = "string"
-    value = "10000"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[8].name"
-    value = "TYK_GW_OPENTELEMETRY_ENABLED"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[8].value"
-    type  = "string"
-    value = var.open_telemetry.enabled
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[9].name"
-    value = "TYK_GW_OPENTELEMETRY_SAMPLING_TYPE"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[9].value"
-    value = "TraceIDRatioBased"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[10].name"
-    value = "TYK_GW_OPENTELEMETRY_SAMPLING_RATIO"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[10].value"
-    type  = "string"
-    value = var.open_telemetry.sampling_ratio
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[11].name"
-    value = "TYK_GW_OPENTELEMETRY_EXPORTER"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[11].value"
-    value = "grpc"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[12].name"
-    value = "TYK_GW_OPENTELEMETRY_ENDPOINT"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[12].value"
-    value = "opentelemetry-collector.dependencies.svc:4317"
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.extraEnvs[13].name"
-    value = "TYK_GW_HTTPPROFILE"
-  }
-
-  set {
-    type  = "string"
-    name  = "tyk-gateway.gateway.extraEnvs[13].value"
-    value = var.profiler.enabled
-  }
-
-  set {
-    name  = "tyk-gateway.gateway.nodeSelector.node"
-    value = var.label
-  }
-
-  set {
-    name  = "tyk-dashboard.dashboard.nodeSelector.node"
-    value = var.resources-label
-  }
-
-  set {
-    name  = "global.components.pump"
-    value = var.analytics.database.enabled || var.analytics.prometheus.enabled
-  }
-
-  set {
-    name  = "tyk-pump.pump.backend[0]"
-    value = var.analytics.database.enabled ? "postgres" : ""
-  }
-
-  set {
-    name  = "tyk-pump.pump.backend[1]"
-    value = var.analytics.prometheus.enabled ? "prometheus" : ""
-  }
-
-  set {
-    name  = "tyk-pump.pump.nodeSelector.node"
-    value = var.resources-label
-  }
-
-  depends_on = [kubernetes_namespace.tyk, helm_release.tyk-redis, helm_release.tyk-pgsql]
+  depends_on = [
+    kubernetes_namespace.tyk,
+    module.redis,
+    kubernetes_config_map.tyk_api_definitions,
+  ]
 }

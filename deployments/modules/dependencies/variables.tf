@@ -7,22 +7,21 @@ variable "taint" {
   type = string
 }
 
-variable "grafana" {
-  type = object({
-    service = object({
-      type = string
-    })
-  })
+variable "domain" {
+  type        = string
+  default     = "benchmarks.demo.traefik.ai"
+  description = "Base domain for DNS and ingress."
+}
 
-  default = {
-    service = {
-      type = "ClusterIP"
-    }
-  }
+variable "service_type" {
+  type        = string
+  default     = "ClusterIP"
+  description = "Service type for the dependencies Traefik instance."
 }
 
 variable "keycloak" {
   type = object({
     enabled = bool
+    chart   = string
   })
 }

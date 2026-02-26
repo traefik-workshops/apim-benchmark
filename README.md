@@ -1,150 +1,157 @@
-# Tyk Performance Testing
-[![aks](https://github.com/TykTechnologies/tyk-performance-testing/actions/workflows/AKS.yml/badge.svg)](https://github.com/TykTechnologies/tyk-performance-testing/actions/workflows/AKS.yml)
-[![EKS](https://github.com/TykTechnologies/tyk-performance-testing/actions/workflows/EKS.yml/badge.svg)](https://github.com/TykTechnologies/tyk-performance-testing/actions/workflows/EKS.yml)
-[![GKE](https://github.com/TykTechnologies/tyk-performance-testing/actions/workflows/GKE.yml/badge.svg)](https://github.com/TykTechnologies/tyk-performance-testing/actions/workflows/GKE.yml)
+# APIM Benchmark
 
-This project is still a WIP. Schema might change and suggestions are welcome. 
+Fair, reproducible performance benchmarks for API gateways and proxies on Kubernetes.
 
-## How to use
+Each provider runs on dedicated, tainted nodes so there's no resource contention between competitors. Load generation also runs on isolated nodes. This ensures the only variable is the gateway itself.
 
-### Locally
-The Repo can be cloned locally. You can stand up aks, eks, or gke using the respective folders or bring in your own cluster. 
+**This project is still a WIP. Schema might change and suggestions are welcome.**
 
-#### Clusters
-##### Terraform managed clusters
-Once the clusters are created, you will need to add the connection config to your .kube/config. Here are examples per k8s services
+Originated from [TykTechnologies/tyk-performance-testing](https://github.com/TykTechnologies/tyk-performance-testing), restructured for provider-neutral, fair benchmarking.
 
-###### AKS
-```
-az aks get-credentials \
-   --resource-group "pt-westus" \
-   --name "pt-westus"
-```
+## Supported Providers
 
-###### EKS
-```
-aws eks --region "us-west-1" update-kubeconfig --name "pt-us-west-1"
-```
-
-###### GKE
-```
-gcloud container clusters get-credentials pt-us-west1-a \
-   --zone us-west1-a \
-   --project performance-testing
-```
-
-### Feature matrix
-
-| Gateway  | Database Analytics | Prometheus Analytics | AuthToken          | JWT RSA/HMAC       | Quota                             | Rate Limiting      | Open Telemetry     | 
+| Gateway  | Database Analytics | Prometheus Analytics | AuthToken          | JWT RSA/HMAC       | Quota                             | Rate Limiting      | Open Telemetry     |
 |----------|--------------------|----------------------|--------------------|--------------------|-----------------------------------|--------------------|--------------------|
 | Tyk      | :white_check_mark: | :white_check_mark:   | :white_check_mark: | :white_check_mark: | :white_check_mark:                | :white_check_mark: | :white_check_mark: |
-| Kong     | :x:                | :white_check_mark:   | :white_check_mark: | :x:                | Implemented through Rate Limiting | :white_check_mark: | :white_check_mark: | 
+| Kong     | :x:                | :white_check_mark:   | :white_check_mark: | :x:                | Implemented through Rate Limiting | :white_check_mark: | :white_check_mark: |
 | Gravitee | :white_check_mark: | :white_check_mark:   | :white_check_mark: | :x:                | Implemented through Rate Limiting | :white_check_mark: | :x:                |
 | Traefik  | :x:                | :white_check_mark:   | :x:                | :x:                | :x:                               | :x:                | :x:                |
 
-##### Self-managed cluster requirements
-To run the tests on your own cluster, you will need node labels that can house the different deployments and resources.
+## Quick Start (local k3d)
 
-Example:
-```
-kubectl label nodes minikube node=dependencies
-kubectl label nodes minikube-m02 node=tyk
-kubectl label nodes minikube-m03 node=tyk-upstream
-kubectl label nodes minikube-m04 node=tyk-tests
-kubectl label nodes minikube-m05 node=tyk-resources
-kubectl label nodes minikube-m06 node=kong
-kubectl label nodes minikube-m07 node=kong-upstream
-kubectl label nodes minikube-m08 node=kong-tests
-kubectl label nodes minikube-m09 node=kong-resources
-kubectl label nodes minikube-m10 node=gravitee
-kubectl label nodes minikube-m11 node=gravitee-upstream
-kubectl label nodes minikube-m12 node=gravitee-tests
-kubectl label nodes minikube-m13 node=gravitee-resources
-kubectl label nodes minikube-m14 node=traefik
-kubectl label nodes minikube-m15 node=traefik-upstream
-kubectl label nodes minikube-m16 node=traefik-tests
-kubectl label nodes minikube-m17 node=traefik-resources
-kubectl label nodes minikube-m18 node=upstream
-kubectl label nodes minikube-m19 node=upstream-tests
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [k3d](https://k3d.io/) v5+
+- [Terraform](https://developer.hashicorp.com/terraform/downloads) v1.5+
+- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- `envsubst` (part of `gettext` — usually pre-installed on Linux/macOS)
+
+### One-command setup
+
+```bash
+make up                  # cluster + deploy Traefik + dependencies
+make test-traefik        # run a baseline benchmark
+make grafana             # open Grafana at http://localhost:3000 (admin/admin)
+make teardown            # destroy everything
 ```
 
-Note: dependencies are required, while the rest are required based on where the tests are being run. 
+### Step-by-step
 
-#### Deployments
-Once you connect to a k8s cluster. You can run the deployment modules to set up the testing environments. Here is an example for the options available:
-```
-kubernetes_config_context = "performance-testing"
+```bash
+# 1. Create the k3d cluster with tainted nodes
+make cluster
 
-analytics_database_enabled    = false
-analytics_prometheus_enabled  = false
-auth_enabled                  = false
-auth_type                     = "authToken"
-quota_enabled                 = false
-quota_rate                    = 999999
-quota_per                     = 3600
-rate_limit_enabled            = false
-rate_limit_rate               = 999999
-rate_limit_per                = 60
-open_telemetry_enabled        = false
-open_telemetry_sampling_ratio = "0.5"
+# 2. Deploy gateways + dependencies
+make deploy              # Traefik only (default k3d.tfvars)
+make deploy-all          # all 4 providers
 
-hpa_enabled                 = false
-hpa_max_replica_count       = 10
-replica_count               = 1
-hpa_avg_cpu_util_percentage = 80
-external_traffic_policy     = "Local"
-resources_requests_cpu      = "0"
-resources_requests_memory   = "0"
-resources_limits_cpu        = "0"
-resources_limits_memory     = "0"
+# 3. Run tests
+make test-traefik        # single provider
+make test-all            # all providers sequentially
 
-service_route_count = 1
-service_app_count   = 1
-service_host_count  = 1
-
-tyk_enabled          = true
-tyk_version          = "v5.7"
-tyk_license          = ""
-tyk_deployment_type  = "Deployment"
-tyk_service_type     = "ClusterIP"
-tyk_go_gc            = 1600
-tyk_go_max_procs     = 8
-tyk_profiler_enabled = false
-
-kong_enabled         = false
-kong_version         = "3.8"
-kong_deployment_type = "Deployment"
-kong_service_type    = "ClusterIP"
-
-gravitee_enabled         = false
-gravitee_version         = "4.5"
-gravitee_deployment_type = "Deployment"
-gravitee_service_type    = "ClusterIP"
-
-traefik_enabled         = false
-traefik_version         = "3.3"
-traefik_deployment_type = "Deployment"
-traefik_service_type    = "ClusterIP"
-
-upstream_enabled     = false
-grafana_service_type = "ClusterIP"
+# 4. Cleanup
+make teardown
 ```
 
-#### Tests
-Once the environment is set up you can run the test's module. Here is an example of the options available:
+## Architecture
+
 ```
-kubernetes_config_context = "performance-testing"
+clusters/    (Terraform)  →  k3d / AKS / EKS / GKE / LKE / OKE / DOKS
+                             Creates node pools with taints & labels
+        │
+        ▼
+deployments/ (Terraform)  →  Helm releases: gateways, Fortio upstreams,
+                             Grafana, cert-manager, k6-operator,
+                             Keycloak, OTel Collector
+        │
+        ▼
+tests/       (Make+kubectl) → k6 ConfigMaps + CRD via kubectl
+                              Fast iteration
+```
 
-tyk_enabled      = true
-kong_enabled     = false
-gravitee_enabled = false
-traefik_enabled  = false
-upstream_enabled = false
+### Node isolation
 
-tests_fortio_options = "size=20"
-tests_executor       = "constant-arrival-rate"
-tests_duration       = 15
-tests_rate           = 20000
-tests_virtual_users  = 50
-tests_parallelism    = 1
+Each provider gets dedicated node pools (tainted with `NoSchedule`):
+
+| Node taint          | Purpose                        |
+|---------------------|--------------------------------|
+| `dependencies`      | Grafana, Prometheus, k6-op     |
+| `<provider>`        | Gateway pods                   |
+| `<provider>-upstream` | Fortio backend               |
+| `<provider>-loadgen`  | k6 test runners              |
+
+Where `<provider>` is one of: `traefik`, `kong`, `tyk`, `gravitee`.
+
+## Configuration
+
+### Cluster — `clusters/k3d.tfvars`
+
+```hcl
+cluster_provider = "k3d"
+apim_providers   = ["traefik", "upstream"]
+```
+
+### Deployments — `deployments/k3d.tfvars`
+
+Controls which gateways are deployed, resource limits, middleware (auth, rate-limiting, quotas, OTel), and observability. See the file for the full set of options.
+
+### Tests — `tests/config/k3d.env`
+
+```env
+EXECUTOR=constant-arrival-rate
+RATE=500              # requests per second
+VIRTUAL_USERS=10      # pre-allocated VUs
+DURATION=2            # minutes
+```
+
+For cloud benchmarks use `tests/config/cloud.env` (20k RPS, 50 VUs, 15 min).
+
+## Make Targets
+
+Run `make help` for the full list. Key targets:
+
+| Target              | Description                              |
+|---------------------|------------------------------------------|
+| `make up`           | Cluster + deploy Traefik (quick start)   |
+| `make up-all`       | Cluster + deploy all providers           |
+| `make test-traefik` | Run k6 test against Traefik              |
+| `make test-all`     | Benchmark all providers sequentially     |
+| `make grafana`      | Port-forward Grafana (localhost:3000)    |
+| `make status`       | Show cluster and pod status              |
+| `make teardown`     | Destroy deployments + cluster            |
+| `make validate`     | Terraform fmt + validate                 |
+
+## Cloud Clusters
+
+```bash
+make cluster CLUSTER_PROVIDER=aks TFVARS=aks.tfvars
+make deploy TFVARS=aks.tfvars
+make test-all CONFIG=cloud KUBE_CONTEXT=benchmark
+```
+
+### Connecting to managed clusters
+
+```
+# AKS
+az aks get-credentials --resource-group "pt-westus" --name "pt-westus"
+
+# EKS
+aws eks --region "us-west-1" update-kubeconfig --name "pt-us-west-1"
+
+# GKE
+gcloud container clusters get-credentials pt-us-west1-a \
+   --zone us-west1-a --project performance-testing
+```
+
+### Self-managed cluster requirements
+
+Your cluster needs nodes labeled for each provider you want to test:
+
+```bash
+kubectl label nodes node-01 node=dependencies
+kubectl label nodes node-02 node=traefik
+kubectl label nodes node-03 node=traefik-upstream
+kubectl label nodes node-04 node=traefik-loadgen
+# ... repeat for kong, tyk, gravitee as needed
 ```

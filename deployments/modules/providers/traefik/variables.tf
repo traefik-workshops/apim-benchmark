@@ -52,10 +52,15 @@ variable "route_count" {
   type = number
 }
 
+variable "traefik_hub_token" {
+  type      = string
+  default   = ""
+  sensitive = true
+}
+
 variable "middlewares" {
-  type = object({ 
+  type = object({
     auth = object({
-      enabled   = bool
       type      = string
       app_count = number
     })
@@ -68,6 +73,19 @@ variable "middlewares" {
       enabled = bool
       rate    = number
       per     = number
+    })
+    tls = object({
+      enabled = bool
+    })
+    headers = object({
+      request = object({
+        set    = map(string)
+        remove = list(string)
+      })
+      response = object({
+        set    = map(string)
+        remove = list(string)
+      })
     })
     observability = object({
       logs = object({

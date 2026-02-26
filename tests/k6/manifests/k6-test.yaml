@@ -1,0 +1,162 @@
+apiVersion: k6.io/v1alpha1
+kind: TestRun
+metadata:
+  name: test
+  namespace: ${PROVIDER}
+spec:
+  parallelism: ${PARALLELISM}
+  separate: false
+  quiet: "false"
+  cleanup: "post"
+  arguments: --out experimental-prometheus-rw --tag testid=${PROVIDER} --env SCENARIO=${EXECUTOR}
+  initializer:
+    metadata:
+      labels:
+        initializer: "k6"
+    volumes:
+    - name: tests
+      configMap:
+        name: tests-configmap
+    - name: scenarios
+      configMap:
+        name: scenarios-configmap
+    - name: auth
+      configMap:
+        name: auth-configmap
+    volumeMounts:
+    - name: tests
+      mountPath: /helpers/tests.js
+      subPath: tests.js
+    - name: scenarios
+      mountPath: /helpers/scenarios.js
+      subPath: scenarios.js
+    - name: auth
+      mountPath: /helpers/auth.js
+      subPath: auth.js
+    nodeSelector:
+      node: ${PROVIDER}-loadgen
+    tolerations:
+    - key: node
+      operator: Equal
+      value: ${PROVIDER}-loadgen
+      effect: NoSchedule
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - topologyKey: kubernetes.io/hostname
+          labelSelector:
+            matchExpressions:
+            - key: initializer
+              operator: In
+              values:
+              - "k6"
+        - topologyKey: kubernetes.io/hostname
+          labelSelector:
+            matchExpressions:
+            - key: runner
+              operator: In
+              values:
+              - "true"
+  starter:
+    nodeSelector:
+      node: ${PROVIDER}-loadgen
+    tolerations:
+    - key: node
+      operator: Equal
+      value: ${PROVIDER}-loadgen
+      effect: NoSchedule
+  runner:
+    volumes:
+    - name: tests
+      configMap:
+        name: tests-configmap
+    - name: scenarios
+      configMap:
+        name: scenarios-configmap
+    - name: auth
+      configMap:
+        name: auth-configmap
+    volumeMounts:
+    - name: tests
+      mountPath: /helpers/tests.js
+      subPath: tests.js
+    - name: scenarios
+      mountPath: /helpers/scenarios.js
+      subPath: scenarios.js
+    - name: auth
+      mountPath: /helpers/auth.js
+      subPath: auth.js
+    nodeSelector:
+      node: ${PROVIDER}-loadgen
+    tolerations:
+    - key: node
+      operator: Equal
+      value: ${PROVIDER}-loadgen
+      effect: NoSchedule
+    env:
+    - name: K6_PROMETHEUS_RW_SERVER_URL
+      value: http://prometheus-kube-prometheus-prometheus.dependencies.svc:9090/api/v1/write
+    - name: K6_PROMETHEUS_RW_TREND_STATS
+      value: p(75),p(90),p(95),p(99)
+    - name: PROVIDER
+      value: "${PROVIDER}"
+    - name: SERVICE_NAME
+      value: "${SERVICE_NAME}"
+    - name: SERVICE_PORT
+      value: "${SERVICE_PORT}"
+    - name: NAMESPACE
+      value: "${PROVIDER}"
+    - name: FORTIO_OPTIONS
+      value: "${FORTIO_OPTIONS}"
+    - name: DURATION
+      value: "${DURATION}"
+    - name: RATE
+      value: "${RATE}"
+    - name: VIRTUAL_USERS
+      value: "${VIRTUAL_USERS}"
+    - name: RAMPING_STEPS
+      value: "${RAMPING_STEPS}"
+    - name: KEY_COUNT
+      value: "${KEY_COUNT}"
+    - name: ROUTE_COUNT
+      value: "${ROUTE_COUNT}"
+    - name: HOST_COUNT
+      value: "${HOST_COUNT}"
+    - name: APP_COUNT
+      value: "${APP_COUNT}"
+    - name: AUTH_ENABLED
+      value: "${AUTH_ENABLED}"
+    - name: AUTH_TYPE
+      value: "${AUTH_TYPE}"
+    - name: USE_TLS
+      value: "${USE_TLS}"
+    - name: ANALYTICS_DB_ENABLED
+      value: "${ANALYTICS_DB_ENABLED}"
+    - name: ANALYTICS_PROM_ENABLED
+      value: "${ANALYTICS_PROM_ENABLED}"
+    - name: QUOTA_ENABLED
+      value: "${QUOTA_ENABLED}"
+    - name: QUOTA_RATE
+      value: "${QUOTA_RATE}"
+    - name: QUOTA_PER
+      value: "${QUOTA_PER}"
+    - name: RATE_LIMIT_ENABLED
+      value: "${RATE_LIMIT_ENABLED}"
+    - name: RATE_LIMIT_RATE
+      value: "${RATE_LIMIT_RATE}"
+    - name: RATE_LIMIT_PER
+      value: "${RATE_LIMIT_PER}"
+    - name: OTEL_ENABLED
+      value: "${OTEL_ENABLED}"
+    - name: OTEL_SAMPLING_RATIO
+      value: "${OTEL_SAMPLING_RATIO}"
+    - name: HEADER_INJ_REQ
+      value: "${HEADER_INJ_REQ}"
+    - name: HEADER_INJ_RES
+      value: "${HEADER_INJ_RES}"
+    - name: TYK_AUTH
+      value: "${TYK_AUTH}"
+  script:
+    configMap:
+      name: test-script-configmap
+      file: script.js
