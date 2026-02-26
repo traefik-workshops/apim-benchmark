@@ -10,12 +10,18 @@ Originated from [TykTechnologies/tyk-performance-testing](https://github.com/Tyk
 
 ## Supported Providers
 
-| Gateway  | Database Analytics | Prometheus Analytics | AuthToken          | JWT RSA/HMAC       | Quota                             | Rate Limiting      | Open Telemetry     |
-|----------|--------------------|----------------------|--------------------|--------------------|-----------------------------------|--------------------|--------------------|
-| Tyk      | :white_check_mark: | :white_check_mark:   | :white_check_mark: | :white_check_mark: | :white_check_mark:                | :white_check_mark: | :white_check_mark: |
-| Kong     | :x:                | :white_check_mark:   | :white_check_mark: | :x:                | Implemented through Rate Limiting | :white_check_mark: | :white_check_mark: |
-| Gravitee | :white_check_mark: | :white_check_mark:   | :white_check_mark: | :x:                | Implemented through Rate Limiting | :white_check_mark: | :x:                |
-| Traefik  | :x:                | :white_check_mark:   | :x:                | :x:                | :x:                               | :x:                | :x:                |
+| Middleware            | Traefik Hub        | Kong (OSS)         | Tyk (OSS)          | Gravitee           | Envoy Gateway      |
+|-----------------------|--------------------|--------------------|--------------------|--------------------|--------------------|
+| Baseline (no auth)    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Rate Limiting         | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
+| Quota                 | :white_check_mark: | via Rate Limiting   | :white_check_mark: | via Rate Limiting   | :x:                |
+| Auth Token (IAC)      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
+| JWT HMAC (HS256)      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
+| JWT Keycloak (RS256)  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Header Manipulation   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| TLS Termination       | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
+| Prometheus Metrics    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| OpenTelemetry Traces  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
 
 ## Quick Start (local k3d)
 
@@ -81,7 +87,7 @@ Each provider gets dedicated node pools (tainted with `NoSchedule`):
 | `<provider>-upstream` | Fortio backend               |
 | `<provider>-loadgen`  | k6 test runners              |
 
-Where `<provider>` is one of: `traefik`, `kong`, `tyk`, `gravitee`.
+Where `<provider>` is one of: `traefik`, `kong`, `tyk`, `gravitee`, `envoygateway`.
 
 ## Configuration
 
@@ -94,7 +100,27 @@ apim_providers   = ["traefik", "upstream"]
 
 ### Deployments — `deployments/k3d.tfvars`
 
-Controls which gateways are deployed, resource limits, middleware (auth, rate-limiting, quotas, OTel), and observability. See the file for the full set of options.
+Controls which gateways are deployed, resource limits, and middleware. Key middleware options:
+
+```hcl
+apim_providers_middlewares = {
+  auth = {
+    type = "jwt_keycloak"    # disabled | jwt_hmac | jwt_keycloak | token_iac
+  }
+  rate_limit = { enabled = false, rate = 100, per = 1 }
+  quota      = { enabled = false, rate = 1000, per = 60 }
+  tls        = { enabled = true }
+  headers = {
+    request  = { set = { "X-Custom" = "value" }, remove = ["X-Unwanted"] }
+    response = { set = { "X-Resp" = "value" }, remove = [] }
+  }
+  observability = {
+    logs    = { enabled = false, exporter = "" }
+    metrics = { enabled = true }
+    traces  = { enabled = false, ratio = "0.1" }
+  }
+}
+```
 
 ### Tests — `tests/config/k3d.env`
 

@@ -89,7 +89,7 @@ apim_providers_middlewares = {
     per     = 1
   }
   tls = {
-    enabled = false
+    enabled = true
   }
   headers = {
     request = {

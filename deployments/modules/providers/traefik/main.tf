@@ -88,9 +88,6 @@ resource "helm_release" "traefik" {
           expose = {
             default = true
           }
-          tls = {
-            enabled = true
-          }
         }
       } : {})
 

@@ -99,6 +99,10 @@ resource "helm_release" "gravitee" {
             enabled = false
           }
         }
+        # NOTE: Gravitee TLS termination is not configured at the gateway level.
+        # The APIM Helm chart's `servers` config requires additional logback
+        # resources that conflict with our setup. TLS is handled by external
+        # ingress/load-balancer when needed.
         ratelimit = {
           redis = {
             host     = "gravitee-redis"

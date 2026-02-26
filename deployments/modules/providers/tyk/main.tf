@@ -46,7 +46,7 @@ resource "helm_release" "tyk" {
 
   values = [
     yamlencode({
-      global = {
+      global = merge({
         redis = {
           addrs = ["${local.redis_name}.${var.namespace}.svc:${local.redis_port}"]
           pass  = local.redis_pass
@@ -55,7 +55,12 @@ resource "helm_release" "tyk" {
         components = {
           pump = false
         }
-      }
+        }, var.middlewares.tls.enabled ? {
+        tls = {
+          gateway                  = true
+          useDefaultTykCertificate = true
+        }
+      } : {})
 
       "tyk-gateway" = {
         gateway = {
@@ -92,12 +97,7 @@ resource "helm_release" "tyk" {
                 name = "tyk-policies"
               }
             }] : [],
-            var.middlewares.tls.enabled ? [{
-              name = "tls-cert"
-              secret = {
-                secretName = "gateway-tls-cert"
-              }
-          }] : [])
+          )
           extraVolumeMounts = concat([
             {
               name      = "tyk-api-definitions"
@@ -110,11 +110,7 @@ resource "helm_release" "tyk" {
               mountPath = "/mnt/tyk-gateway/policies"
               readOnly  = true
             }] : [],
-            var.middlewares.tls.enabled ? [{
-              name      = "tls-cert"
-              mountPath = "/mnt/tls"
-              readOnly  = true
-          }] : [])
+          )
 
           tykConfig = merge(
             {
@@ -137,15 +133,7 @@ resource "helm_release" "tyk" {
             } : {},
 
             # --- TLS termination ------------------------------------------------
-            var.middlewares.tls.enabled ? {
-              http_server_options = {
-                use_ssl = true
-                certificates = [{
-                  cert_file = "/mnt/tls/tls.crt"
-                  key_file  = "/mnt/tls/tls.key"
-                }]
-              }
-            } : {},
+            # TLS is handled by global.tls.gateway in the Helm chart values.
 
             # --- OpenTelemetry tracing ------------------------------------------
             var.middlewares.observability.traces.enabled ? {
