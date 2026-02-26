@@ -8,6 +8,8 @@ module "dependencies" {
   domain       = var.domain
   service_type = var.dependencies_service_type
 
+  dns_traefiker = var.dns_traefiker
+
   keycloak = {
     enabled = true
     chart   = "/Users/zaidalbirawi/dev/traefik-demo-resources/keycloak/helm"

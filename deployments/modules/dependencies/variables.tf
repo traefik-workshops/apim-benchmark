@@ -19,6 +19,18 @@ variable "service_type" {
   description = "Service type for the dependencies Traefik instance."
 }
 
+variable "dns_traefiker" {
+  type = object({
+    enabled = bool
+    chart   = string
+  })
+  default = {
+    enabled = false
+    chart   = ""
+  }
+  description = "DNS Traefiker configuration for automatic DNS registration."
+}
+
 variable "keycloak" {
   type = object({
     enabled = bool
