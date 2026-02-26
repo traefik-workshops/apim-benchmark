@@ -20,7 +20,7 @@ Originated from [TykTechnologies/tyk-performance-testing](https://github.com/Tyk
 | JWT Keycloak (RS256)  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Header Manipulation   | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | TLS Termination       | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
-| Prometheus Metrics    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Prometheus Metrics    | :white_check_mark: | :white_check_mark: | :x: (needs Pump)    | :white_check_mark: | :white_check_mark: |
 | OpenTelemetry Traces  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
 
 ## Quick Start (local k3d)
