@@ -94,11 +94,6 @@ variable "apim_providers_deployment" {
   type = object({
     type          = string
     replica_count = number
-    hpa = object({
-      enabled                 = bool
-      max_replica_count       = number
-      avg_cpu_util_percentage = number
-    })
     resources = object({
       requests = object({
         cpu    = string
@@ -114,11 +109,6 @@ variable "apim_providers_deployment" {
   default = {
     type          = "Deployment"
     replica_count = 1
-    hpa = {
-      enabled                 = false
-      max_replica_count       = 1
-      avg_cpu_util_percentage = 50
-    }
     resources = {
       requests = {
         cpu    = "0"

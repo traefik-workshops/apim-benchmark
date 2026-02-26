@@ -22,11 +22,6 @@ variable "deployment" {
   type = object({
     type          = string
     replica_count = number
-    hpa = object({
-      enabled                 = bool
-      max_replica_count       = number
-      avg_cpu_util_percentage = number
-    })
     resources = object({
       requests = object({
         cpu    = string

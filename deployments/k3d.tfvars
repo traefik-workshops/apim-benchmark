@@ -45,11 +45,6 @@ apim_providers = {
 apim_providers_deployment = {
   type          = "Deployment"
   replica_count = 1
-  hpa = {
-    enabled                 = false
-    max_replica_count       = 1
-    avg_cpu_util_percentage = 50
-  }
   resources = {
     requests = {
       cpu    = "0"
