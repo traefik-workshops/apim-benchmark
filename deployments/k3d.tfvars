@@ -93,12 +93,12 @@ apim_providers_middlewares = {
   }
   headers = {
     request = {
-      set    = {}
-      remove = []
+      set    = { "X-Benchmark-Req" = "hello" }
+      remove = ["X-Remove-Me"]
     }
     response = {
-      set    = {}
-      remove = []
+      set    = { "X-Benchmark-Resp" = "world" }
+      remove = ["X-Remove-Resp"]
     }
   }
   observability = {

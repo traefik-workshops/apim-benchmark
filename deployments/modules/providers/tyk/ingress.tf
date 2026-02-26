@@ -2,10 +2,6 @@ locals {
   is_auth_enabled  = var.middlewares.auth.type != "disabled"
   is_jwt_auth      = contains(["jwt_hmac", "jwt_keycloak"], var.middlewares.auth.type)
   is_token_auth    = contains(["token_postgres", "token_iac"], var.middlewares.auth.type)
-  has_req_headers  = length(var.middlewares.headers.request.set) > 0 || length(var.middlewares.headers.request.remove) > 0
-  has_resp_headers = length(var.middlewares.headers.response.set) > 0 || length(var.middlewares.headers.response.remove) > 0
-  has_headers      = local.has_req_headers || local.has_resp_headers
-
   # Build API definition JSON files for each route
   api_definitions = {
     # Note: Terraform's merge() coerces booleans to strings in mixed-type maps.
@@ -28,39 +24,20 @@ locals {
           preserve_host_header = false
         }
 
-        # version_data with optional header transforms in extended_paths
+        # version_data — header transforms live inside the version definition
+        # (global_headers / global_response_headers on the VersionInfo struct).
         version_data = {
           default_version = "Default"
           not_versioned   = true
           versions = {
-            Default = merge(
-              {
-                name               = "Default"
-                use_extended_paths = true
-              },
-              local.has_headers ? {
-                extended_paths = merge(
-                  local.has_req_headers ? {
-                    transform_headers = [{
-                      add_headers    = var.middlewares.headers.request.set
-                      delete_headers = var.middlewares.headers.request.remove
-                      path           = "/"
-                      method         = ""
-                      act_on         = ""
-                    }]
-                  } : {},
-                  local.has_resp_headers ? {
-                    transform_response_headers = [{
-                      add_headers    = var.middlewares.headers.response.set
-                      delete_headers = var.middlewares.headers.response.remove
-                      path           = "/"
-                      method         = ""
-                      act_on         = ""
-                    }]
-                  } : {},
-                )
-              } : {},
-            )
+            Default = {
+              name                           = "Default"
+              use_extended_paths             = true
+              global_headers                 = var.middlewares.headers.request.set
+              global_headers_remove          = var.middlewares.headers.request.remove
+              global_response_headers        = var.middlewares.headers.response.set
+              global_response_headers_remove = var.middlewares.headers.response.remove
+            }
           }
         }
       },
@@ -105,6 +82,8 @@ locals {
         quota_max          = var.middlewares.quota.rate
         quota_renewal_rate = var.middlewares.quota.per
       } : {},
+
+      # Header manipulation is inside version_data.versions.Default above.
     )), "\"enable_jwt\":\"true\"", "\"enable_jwt\":true"), "\"enable_jwt\":\"false\"", "\"enable_jwt\":false"), "\"jwt_default_policies\":\"__JWT_POLICIES_PLACEHOLDER__\"", "\"jwt_default_policies\":[\"default-jwt-policy\"]")
   }
 }
