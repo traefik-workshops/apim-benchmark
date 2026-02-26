@@ -1,18 +1,20 @@
 resource "kubernetes_deployment" "fortio" {
   metadata {
-    name      = "fortio-upstream"
+    name      = "fortio-${count.index}"
     namespace = var.namespace
   }
   spec {
     selector {
       match_labels = {
-        app = "fortio"
+        app      = "fortio"
+        instance = "${count.index}"
       }
     }
     template {
       metadata {
         labels = {
-          app = "fortio"
+          app      = "fortio"
+          instance = "${count.index}"
         }
       }
       spec {
@@ -34,6 +36,8 @@ resource "kubernetes_deployment" "fortio" {
       }
     }
   }
+
+  count = var.service_count
 }
 
 resource "kubernetes_service_v1" "fortio" {
@@ -41,13 +45,15 @@ resource "kubernetes_service_v1" "fortio" {
     name      = "fortio-${count.index}"
     namespace = var.namespace
     labels = {
-      app = "fortio"
+      app      = "fortio"
+      instance = "${count.index}"
     }
   }
   spec {
     type = "ClusterIP"
     selector = {
-      app = "fortio"
+      app      = "fortio"
+      instance = "${count.index}"
     }
     port {
       name        = "http"
@@ -59,4 +65,3 @@ resource "kubernetes_service_v1" "fortio" {
 
   count = var.service_count
 }
-
