@@ -7,7 +7,12 @@ module "pgsql" {
   database  = local.pgsql_name
 
   extra_values = {
-    resources = {}
+    primary = {
+      resources = {
+        requests = null
+        limits   = null
+      }
+    }
   }
 
   depends_on = [kubernetes_namespace.gravitee]
@@ -22,9 +27,11 @@ module "redis" {
   replicaCount = 0
 
   extra_values = {
-    resources = {}
     master = {
-      resources = {}
+      resources = {
+        requests = null
+        limits   = null
+      }
     }
   }
 

@@ -7,9 +7,11 @@ module "redis" {
   replicaCount = 0
 
   extra_values = {
-    resources = {}
     master = {
-      resources = {}
+      resources = {
+        requests = null
+        limits   = null
+      }
     }
   }
 
