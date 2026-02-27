@@ -1,7 +1,7 @@
 locals {
-  is_auth_enabled  = var.middlewares.auth.type != "disabled"
-  is_jwt_auth      = contains(["jwt_hmac", "jwt_keycloak"], var.middlewares.auth.type)
-  is_token_auth    = contains(["token_postgres", "token_iac"], var.middlewares.auth.type)
+  is_auth_enabled = var.middlewares.auth.type != "disabled"
+  is_jwt_auth     = contains(["jwt_hmac", "jwt_keycloak"], var.middlewares.auth.type)
+  is_token_auth   = contains(["token_postgres", "token_iac"], var.middlewares.auth.type)
   # Build API definition JSON files for each route
   api_definitions = {
     # Note: Terraform's merge() coerces booleans to strings in mixed-type maps.
@@ -99,7 +99,7 @@ resource "kubernetes_config_map" "tyk_api_definitions" {
       auth                   = local.is_auth_enabled ? var.middlewares.auth.type : "Off"
       rate-limiting          = var.middlewares.rate_limit.enabled ? format("%d/%d", var.middlewares.rate_limit.rate, var.middlewares.rate_limit.per) : "Off"
       quota                  = var.middlewares.quota.enabled ? format("%d/%d", var.middlewares.quota.rate, var.middlewares.quota.per) : "Off"
-      open-telemetry-traces  = var.middlewares.observability.traces.enabled ? var.middlewares.observability.traces.ratio : "Off"
+      open-telemetry-traces  = var.middlewares.observability.traces.enabled ? "Always" : "Off"
       open-telemetry-metrics = var.middlewares.observability.metrics.enabled ? "Pump" : "Off"
       open-telemetry-logs    = "N/A"
     }

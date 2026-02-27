@@ -178,10 +178,7 @@ variable "apim_providers_middlewares" {
     observability = object({
       metrics = object({ enabled = bool })
       logs    = object({ enabled = bool })
-      traces = object({
-        enabled = bool
-        ratio   = string
-      })
+      traces  = object({ enabled = bool })
     })
   })
 
@@ -216,10 +213,7 @@ variable "apim_providers_middlewares" {
     observability = {
       metrics = { enabled = false }
       logs    = { enabled = false }
-      traces = {
-        enabled = false
-        ratio   = ""
-      }
+      traces  = { enabled = false }
     }
   }
 

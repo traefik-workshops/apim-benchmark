@@ -99,10 +99,7 @@ apim_providers_middlewares = {
   observability = {
     metrics = { enabled = true }
     logs    = { enabled = false }
-    traces = {
-      enabled = true
-      ratio   = "0.1"
-    }
+    traces  = { enabled = true }
   }
 }
 

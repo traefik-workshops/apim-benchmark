@@ -160,7 +160,7 @@ resource "helm_release" "tyk" {
                 endpoint = "opentelemetry-collector.dependencies.svc:4317"
                 sampling = {
                   type = "TraceIDRatioBased"
-                  rate = var.middlewares.observability.traces.ratio
+                  rate = 1
                 }
               }
             } : {},

@@ -80,10 +80,7 @@ variable "middlewares" {
     observability = object({
       metrics = object({ enabled = bool })
       logs    = object({ enabled = bool })
-      traces = object({
-        enabled = bool
-        ratio   = string
-      })
+      traces  = object({ enabled = bool })
     })
   })
 }

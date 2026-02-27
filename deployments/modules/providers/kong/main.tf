@@ -86,7 +86,7 @@ resource "helm_release" "kong" {
           nginx_http_keepalive_requests   = "999999"
           proxy_access_log                = var.middlewares.observability.logs.enabled ? "/dev/stdout" : "off"
           tracing_instrumentations        = var.middlewares.observability.traces.enabled ? "all" : "off"
-          tracing_sampling_rate           = var.middlewares.observability.traces.enabled ? var.middlewares.observability.traces.ratio : "0"
+          tracing_sampling_rate           = var.middlewares.observability.traces.enabled ? "1" : "0"
         }
 
         admin = {
