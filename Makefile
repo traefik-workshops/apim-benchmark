@@ -143,19 +143,6 @@ test-clean: ## Clean up all test resources
 	$(MAKE) -C tests clean-all
 
 # ---------------------------------------------------------------------------
-# Observability
-# ---------------------------------------------------------------------------
-.PHONY: grafana prometheus
-
-grafana: ## Port-forward Grafana dashboard (http://localhost:3000)
-	@echo "Grafana: http://localhost:3000 (admin/admin)"
-	kubectl --context=$(KUBE_CONTEXT) port-forward -n dependencies svc/grafana 3000:80
-
-prometheus: ## Port-forward Prometheus (http://localhost:9090)
-	@echo "Prometheus: http://localhost:9090"
-	kubectl --context=$(KUBE_CONTEXT) port-forward -n dependencies svc/prometheus-server 9090:80
-
-# ---------------------------------------------------------------------------
 # Convenience / lifecycle
 # ---------------------------------------------------------------------------
 .PHONY: up up-all teardown clean status

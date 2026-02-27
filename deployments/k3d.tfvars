@@ -109,7 +109,6 @@ apim_providers_middlewares = {
 # --- Domain & Dependencies -------------------------------------------------
 domain                    = "benchmarks.demo.traefik.ai"
 dependencies_service_type = "LoadBalancer"
-grafana_service_type      = "ClusterIP"
 
 dns_traefiker = {
   enabled = true

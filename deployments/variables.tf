@@ -299,11 +299,6 @@ variable "dns_traefiker" {
   description = "DNS Traefiker configuration for automatic Cloudflare DNS registration."
 }
 
-variable "grafana_service_type" {
-  type        = string
-  default     = "ClusterIP"
-  description = "Service type for the Grafana instance."
-}
 
 variable "traefik_hub_token" {
   type        = string
