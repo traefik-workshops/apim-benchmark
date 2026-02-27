@@ -13,4 +13,10 @@ module "k3d" {
 
   cluster_name = "benchmark"
   worker_nodes = module.shared.all_nodes
+
+  ports = [
+    { from = 80, to = 80 },
+    { from = 443, to = 443 },
+    { from = 8080, to = 8080 },
+  ]
 }

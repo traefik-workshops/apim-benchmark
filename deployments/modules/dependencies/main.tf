@@ -37,9 +37,10 @@ module "traefik" {
   tolerations           = local.tolerations
 
   dns_traefiker = {
-    enabled = var.dns_traefiker.enabled
-    domain  = var.domain
-    chart   = var.dns_traefiker.chart
+    enabled     = var.dns_traefiker.enabled
+    domain      = var.domain
+    chart       = var.dns_traefiker.chart
+    ip_override = var.dns_traefiker.ip_override
   }
 
   extra_values = {

@@ -21,12 +21,14 @@ variable "service_type" {
 
 variable "dns_traefiker" {
   type = object({
-    enabled = bool
-    chart   = string
+    enabled     = bool
+    chart       = string
+    ip_override = optional(string, "")
   })
   default = {
-    enabled = false
-    chart   = ""
+    enabled     = false
+    chart       = ""
+    ip_override = ""
   }
   description = "DNS Traefiker configuration for automatic DNS registration."
 }
