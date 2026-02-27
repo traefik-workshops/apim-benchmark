@@ -4551,7 +4551,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8537fa",
+            "fixedColor": "#24a1c1",
             "mode": "fixed"
           },
           "decimals": 2,
