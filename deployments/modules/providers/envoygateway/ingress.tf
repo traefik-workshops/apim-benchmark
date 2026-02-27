@@ -40,6 +40,8 @@ spec:
         initContainers:
         - name: shutdown-manager
           resources: null
+      envoyService:
+        type: ClusterIP
 ${local.telemetry_block}
 YAML
 
