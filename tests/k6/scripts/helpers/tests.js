@@ -7,11 +7,10 @@ import encoding from 'k6/encoding';
 // ---------------------------------------------------------------------------
 // Metrics gauges — these appear in Grafana dashboards for test context
 // ---------------------------------------------------------------------------
-const analyticsGauge       = new Gauge('deployment_config_analytics');
 const authGauge            = new Gauge('deployment_config_auth');
 const quotaGauge           = new Gauge('deployment_config_quota');
 const rateLimitGauge       = new Gauge('deployment_config_rate_limit');
-const openTelemetryGauge   = new Gauge('deployment_config_open_telemetry');
+const otelGauge            = new Gauge('deployment_config_open_telemetry');
 const headerInjectionGauge = new Gauge('deployment_config_header_injection');
 
 const durationGauge     = new Gauge('test_config_duration');
@@ -43,17 +42,6 @@ const getHostCount  = () => envInt("HOST_COUNT");
 // addTestInfoMetrics — records the test configuration as k6 metrics
 // ---------------------------------------------------------------------------
 const addTestInfoMetrics = ({ duration, rate, virtual_users, fortio_options }, key_count) => {
-  const analyticsDb   = envBool("ANALYTICS_DB_ENABLED");
-  const analyticsProm = envBool("ANALYTICS_PROM_ENABLED");
-  const analytics = [
-    analyticsDb   ? "Database"   : "",
-    analyticsProm ? "Prometheus" : "",
-  ].filter(item => item !== "");
-
-  analyticsGauge.add(1, {
-    state: analytics.length > 0 ? analytics.join(", ") : "Off",
-  });
-
   authGauge.add(1, {
     state: getAuth() ? getAuthType() + " / " + key_count : "Off",
   });
@@ -70,10 +58,13 @@ const addTestInfoMetrics = ({ duration, rate, virtual_users, fortio_options }, k
       : "Off",
   });
 
-  openTelemetryGauge.add(1, {
-    state: envBool("OTEL_ENABLED")
-      ? envStr("OTEL_SAMPLING_RATIO")
-      : "Off",
+  const otelSignals = [
+    envBool("OTEL_METRICS_ENABLED") ? "Metrics" : "",
+    envBool("OTEL_LOGS_ENABLED")    ? "Logs"    : "",
+    envBool("OTEL_TRACES_ENABLED")  ? "Traces"  : "",
+  ].filter(s => s !== "");
+  otelGauge.add(1, {
+    state: otelSignals.length > 0 ? otelSignals.join(", ") : "Off",
   });
 
   const headerInj = [

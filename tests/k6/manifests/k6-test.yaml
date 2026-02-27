@@ -124,16 +124,10 @@ spec:
       value: "${HOST_COUNT}"
     - name: APP_COUNT
       value: "${APP_COUNT}"
-    - name: AUTH_ENABLED
-      value: "${AUTH_ENABLED}"
     - name: AUTH_TYPE
       value: "${AUTH_TYPE}"
     - name: USE_TLS
       value: "${USE_TLS}"
-    - name: ANALYTICS_DB_ENABLED
-      value: "${ANALYTICS_DB_ENABLED}"
-    - name: ANALYTICS_PROM_ENABLED
-      value: "${ANALYTICS_PROM_ENABLED}"
     - name: QUOTA_ENABLED
       value: "${QUOTA_ENABLED}"
     - name: QUOTA_RATE
@@ -146,10 +140,12 @@ spec:
       value: "${RATE_LIMIT_RATE}"
     - name: RATE_LIMIT_PER
       value: "${RATE_LIMIT_PER}"
-    - name: OTEL_ENABLED
-      value: "${OTEL_ENABLED}"
-    - name: OTEL_SAMPLING_RATIO
-      value: "${OTEL_SAMPLING_RATIO}"
+    - name: OTEL_METRICS_ENABLED
+      value: "${OTEL_METRICS_ENABLED}"
+    - name: OTEL_LOGS_ENABLED
+      value: "${OTEL_LOGS_ENABLED}"
+    - name: OTEL_TRACES_ENABLED
+      value: "${OTEL_TRACES_ENABLED}"
     - name: HEADER_INJ_REQ
       value: "${HEADER_INJ_REQ}"
     - name: HEADER_INJ_RES
