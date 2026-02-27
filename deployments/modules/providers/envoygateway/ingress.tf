@@ -37,9 +37,6 @@ spec:
       envoyDeployment:
         container:
           resources: null
-        initContainers:
-        - name: shutdown-manager
-          resources: null
       envoyService:
         type: ClusterIP
 ${local.telemetry_block}
