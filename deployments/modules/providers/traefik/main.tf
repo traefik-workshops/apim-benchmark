@@ -91,11 +91,13 @@ resource "helm_release" "traefik" {
         }
       } : {})
 
-      experimental = {
+      experimental = merge({
         kubernetesGateway = {
           enabled = true
         }
-      }
+        }, var.middlewares.observability.logs.enabled ? {
+        otlpLogs = true
+      } : {})
 
       gateway = {
         listeners = {

@@ -20,7 +20,7 @@ locals {
         proxy = {
           target_url           = "http://fortio-${i % var.service.count}.${var.namespace}.svc:8080"
           listen_path          = "/api-${i}"
-          strip_listen_path    = true
+          strip_listen_path    = false
           preserve_host_header = false
         }
 

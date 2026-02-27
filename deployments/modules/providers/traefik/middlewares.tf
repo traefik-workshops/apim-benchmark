@@ -115,16 +115,18 @@ YAML
 }
 
 resource "kubectl_manifest" "managed_subscription" {
-  yaml_body = <<YAML
-apiVersion: hub.traefik.io/v1alpha1
-kind: ManagedSubscription
-metadata:
-  name: benchmark-subscription
-  namespace: ${var.namespace}
-spec:
-  managedApplications:
-${join("", [for i in range(var.middlewares.auth.app_count) : "  - name: benchmark-app-${i}\n"])}  apis:
-${join("", [for i in range(var.route_count) : "  - name: benchmark-api-${i}\n"])}YAML
+  yaml_body = yamlencode({
+    apiVersion = "hub.traefik.io/v1alpha1"
+    kind       = "ManagedSubscription"
+    metadata = {
+      name      = "benchmark-subscription"
+      namespace = var.namespace
+    }
+    spec = {
+      managedApplications = [for i in range(var.middlewares.auth.app_count) : { name = "benchmark-app-${i}" }]
+      apis                = [for i in range(var.route_count) : { name = "benchmark-api-${i}" }]
+    }
+  })
 
   count      = var.middlewares.auth.type == "token_iac" ? 1 : 0
   depends_on = [kubectl_manifest.managed_app, kubectl_manifest.hub_api]

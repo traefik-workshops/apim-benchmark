@@ -6,7 +6,7 @@ metadata:
   name: api-${count.index}
   namespace: "${var.namespace}"
   annotations:
-    konghq.com/strip-path: 'true'
+    konghq.com/strip-path: 'false'
     konghq.com/plugins: "${local.plugins}"
     auth: "${var.middlewares.auth.type != "disabled" ? var.middlewares.auth.type : "Off"}"
     rate-limiting: "${var.middlewares.rate_limit.enabled ? format("%d/%d", var.middlewares.rate_limit.rate, var.middlewares.rate_limit.per) : "Off"}"
