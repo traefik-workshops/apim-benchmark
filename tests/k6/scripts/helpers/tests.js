@@ -11,6 +11,7 @@ const authGauge            = new Gauge('deployment_config_auth');
 const quotaGauge           = new Gauge('deployment_config_quota');
 const rateLimitGauge       = new Gauge('deployment_config_rate_limit');
 const otelGauge            = new Gauge('deployment_config_open_telemetry');
+const tlsGauge             = new Gauge('deployment_config_tls');
 const headerInjectionGauge = new Gauge('deployment_config_header_injection');
 
 const durationGauge     = new Gauge('test_config_duration');
@@ -57,6 +58,8 @@ const addTestInfoMetrics = ({ duration, rate, virtual_users, fortio_options }, k
       ? envStr("RATE_LIMIT_RATE") + " / " + envStr("RATE_LIMIT_PER")
       : "Off",
   });
+
+  tlsGauge.add(1, { state: envBool("USE_TLS") ? "Enabled" : "Off" });
 
   const otelSignals = [
     envBool("OTEL_METRICS_ENABLED") ? "Metrics" : "",
