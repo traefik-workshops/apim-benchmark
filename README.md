@@ -39,7 +39,6 @@ Originated from [TykTechnologies/tyk-performance-testing](https://github.com/Tyk
 ```bash
 make up                  # cluster + deploy Traefik + dependencies
 make test-traefik        # run a baseline benchmark
-make grafana             # open Grafana at http://localhost:3000 (admin/admin)
 make teardown            # destroy everything
 ```
 
@@ -51,7 +50,7 @@ make cluster
 
 # 2. Deploy gateways + dependencies
 make deploy              # Traefik only (default k3d.tfvars)
-make deploy-all          # all 4 providers
+make deploy-all          # all 5 providers
 
 # 3. Run tests
 make test-traefik        # single provider
@@ -64,7 +63,7 @@ make teardown
 ## Architecture
 
 ```
-clusters/    (Terraform)  →  k3d / AKS / EKS / GKE / LKE / OKE / DOKS
+clusters/    (Terraform)  →  k3d (or any managed k8s cluster)
                              Creates node pools with taints & labels
         │
         ▼
@@ -118,7 +117,7 @@ apim_providers_middlewares = {
   observability = {
     metrics = { enabled = true }
     logs    = { enabled = false }
-    traces  = { enabled = true, ratio = "0.1" }
+    traces  = { enabled = true }
   }
 }
 ```
@@ -144,41 +143,33 @@ Run `make help` for the full list. Key targets:
 | `make up-all`       | Cluster + deploy all providers           |
 | `make test-traefik` | Run k6 test against Traefik              |
 | `make test-all`     | Benchmark all providers sequentially     |
-| `make grafana`      | Port-forward Grafana (localhost:3000)    |
 | `make status`       | Show cluster and pod status              |
 | `make teardown`     | Destroy deployments + cluster            |
 | `make validate`     | Terraform fmt + validate                 |
 
-## Cloud Clusters
+## Cloud / Self-Managed Clusters
+
+For production-grade benchmarks on cloud infrastructure:
 
 ```bash
-make cluster CLUSTER_PROVIDER=aks TFVARS=aks.tfvars
-make deploy TFVARS=aks.tfvars
-make test-all CONFIG=cloud KUBE_CONTEXT=benchmark
+# 1. Create your cluster with the appropriate tfvars
+make cluster CLUSTER_PROVIDER=<provider> TFVARS=<provider>.tfvars
+
+# 2. Deploy gateways
+make deploy TFVARS=<provider>.tfvars
+
+# 3. Run tests with cloud config (20k RPS, 50 VUs, 15 min)
+make test-all CONFIG=cloud KUBE_CONTEXT=<your-context>
 ```
 
-### Connecting to managed clusters
+### Node labeling requirements
 
-```
-# AKS
-az aks get-credentials --resource-group "pt-westus" --name "pt-westus"
-
-# EKS
-aws eks --region "us-west-1" update-kubeconfig --name "pt-us-west-1"
-
-# GKE
-gcloud container clusters get-credentials pt-us-west1-a \
-   --zone us-west1-a --project performance-testing
-```
-
-### Self-managed cluster requirements
-
-Your cluster needs nodes labeled for each provider you want to test:
+Your cluster needs nodes labeled and tainted for each provider you want to test:
 
 ```bash
 kubectl label nodes node-01 node=dependencies
 kubectl label nodes node-02 node=traefik
 kubectl label nodes node-03 node=traefik-upstream
 kubectl label nodes node-04 node=traefik-loadgen
-# ... repeat for kong, tyk, gravitee as needed
+# ... repeat for kong, tyk, gravitee, envoygateway as needed
 ```

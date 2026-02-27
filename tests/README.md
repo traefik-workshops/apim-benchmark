@@ -1,66 +1,74 @@
-## Requirements
+# Tests
 
-| Name | Version |
-|------|---------|
-| <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | >= 2.0.4 |
+k6 load tests deployed via `kubectl` and the [k6-operator](https://github.com/grafana/k6-operator) CRD.
 
-## Modules
+## Usage
 
-| Name | Source | Version |
-|------|--------|---------|
-| <a name="module_tests"></a> [tests](#module\_tests) | ../modules/tests | n/a |
+```bash
+# From the repo root:
+make test-traefik          # single provider
+make test-all              # all providers sequentially
 
-## Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_gravitee_enabled"></a> [gravitee\_enabled](#input\_gravitee\_enabled) | Enable Gravitee services. | `bool` | `false` | no |
-| <a name="input_kong_enabled"></a> [kong\_enabled](#input\_kong\_enabled) | Enable Kong services. | `bool` | `false` | no |
-| <a name="input_kubernetes_config_context"></a> [kubernetes\_config\_context](#input\_kubernetes\_config\_context) | Kubernetes config context. | `string` | `"minikube"` | no |
-| <a name="input_kubernetes_config_path"></a> [kubernetes\_config\_path](#input\_kubernetes\_config\_path) | Kubernetes config file path. | `string` | `"~/.kube/config"` | no |
-| <a name="input_tests_auth_key_count"></a> [tests\_auth\_key\_count](#input\_tests\_auth\_key\_count) | Number of Authentication Tokens used for the test per test worker (tests\_parallelism). | `number` | `100` | no |
-| <a name="input_tests_duration"></a> [tests\_duration](#input\_tests\_duration) | Test duration in minutes. | `number` | `15` | no |
-| <a name="input_tests_executor"></a> [tests\_executor](#input\_tests\_executor) | Choose the executor for the test. Options are: 'constant-vus', 'ramping-vus', 'constant-arrival-rate', 'ramping-arrival-rate', 'externally-controlled'. | `string` | `"constant-arrival-rate"` | no |
-| <a name="input_tests_fortio_options"></a> [tests\_fortio\_options](#input\_tests\_fortio\_options) | Set the parameters for the request to fortio-server. Read more at https://github.com/fortio/fortio?tab=readme-ov-file#server-urls-and-features | `string` | `"size=20"` | no |
-| <a name="input_tests_parallelism"></a> [tests\_parallelism](#input\_tests\_parallelism) | Number of workers for the tests. | `number` | `1` | no |
-| <a name="input_tests_ramping_steps"></a> [tests\_ramping\_steps](#input\_tests\_ramping\_steps) | Number of ramping steps for the test, applies for 'ramping-vus' and 'ramping-arrival-rate' executors. | `number` | `10` | no |
-| <a name="input_tests_rate"></a> [tests\_rate](#input\_tests\_rate) | Test RPS, applies for 'constant-arrival-rate' and 'ramping-arrival-rate' executors. | `number` | `5000` | no |
-| <a name="input_tests_virtual_users"></a> [tests\_virtual\_users](#input\_tests\_virtual\_users) | Number of virtual users to be used for the test. | `number` | `50` | no |
-| <a name="input_traefik_enabled"></a> [traefik\_enabled](#input\_traefik\_enabled) | Enable Traefik services. | `bool` | `true` | no |
-| <a name="input_tyk_enabled"></a> [tyk\_enabled](#input\_tyk\_enabled) | Enable Tyk services. | `bool` | `true` | no |
-| <a name="input_upstream_enabled"></a> [upstream\_enabled](#input\_upstream\_enabled) | Enable Fortio upstream service for baseline testing. | `bool` | `false` | no |
-
-### externally-controlled
-
-```
-kubernetes_config_context = "performance-testing"
-
-tyk_enabled      = true
-kong_enabled     = true
-gravitee_enabled = true
-traefik_enabled  = true
-upstream_enabled = false
-
-tests_fortio_options = "size=20"
-tests_executor       = "externally-controlled"
-tests_auth_key_count = 10
-tests_ramping_steps  = 10
-tests_duration       = 15
-tests_rate           = 5000
-tests_virtual_users  = 1000
-tests_parallelism    = 1
+# Or from this directory:
+make run PROVIDER=traefik
+make wait PROVIDER=traefik
+make clean PROVIDER=traefik
 ```
 
-Increase VUs dynamically over the next 15 minutes.
-```
-for i in {1..100}; do
-   VUS=$((i * 10))
+## Configuration
 
-   kubectl exec -it $(kubectl get pod -l k6_cr=test -l runner=true -n tyk      -o jsonpath='{.items[*].metadata.name}') -n tyk      -- k6 scale --vus $VUS
-   kubectl exec -it $(kubectl get pod -l k6_cr=test -l runner=true -n kong     -o jsonpath='{.items[*].metadata.name}') -n kong     -- k6 scale --vus $VUS
-   kubectl exec -it $(kubectl get pod -l k6_cr=test -l runner=true -n gravitee -o jsonpath='{.items[*].metadata.name}') -n gravitee -- k6 scale --vus $VUS
-   kubectl exec -it $(kubectl get pod -l k6_cr=test -l runner=true -n traefik  -o jsonpath='{.items[*].metadata.name}') -n traefik  -- k6 scale --vus $VUS
+Test parameters are set via env files in `config/`:
 
-   sleep 9
-done
+| File          | Purpose                                      |
+|---------------|----------------------------------------------|
+| `k3d.env`     | Local k3d defaults (500 RPS, 2 min)          |
+| `cloud.env`   | Cloud benchmarks (20k RPS, 15 min)           |
+
+Override the config file with `CONFIG=cloud`:
+
+```bash
+make run PROVIDER=traefik CONFIG=cloud KUBE_CONTEXT=benchmark
 ```
+
+### Key variables
+
+| Variable              | Description                          | Default (k3d)   |
+|-----------------------|--------------------------------------|------------------|
+| `RATE`                | Requests per second                  | `500`            |
+| `VIRTUAL_USERS`       | Pre-allocated VUs                    | `10`             |
+| `DURATION`            | Test duration (minutes)              | `2`              |
+| `AUTH_TYPE`           | `disabled` / `jwt_hmac` / `jwt_keycloak` / `token_iac` | `jwt_keycloak` |
+| `USE_TLS`             | Enable TLS termination               | `false`          |
+| `ROUTE_COUNT`         | Number of API routes                 | `1`              |
+| `OTEL_METRICS_ENABLED`| Export OTLP metrics                  | `true`           |
+| `OTEL_TRACES_ENABLED` | Export OTLP traces                   | `true`           |
+
+See `config/k3d.env` for the full list.
+
+## Structure
+
+```
+tests/
+  Makefile                  # Deploy/run/clean k6 tests via kubectl
+  config/
+    k3d.env                 # Local test config
+    cloud.env               # Cloud test config
+  k6/
+    scripts/
+      test.js               # Main k6 test script
+      helpers/
+        tests.js            # Test config gauges + JWT helpers
+        scenarios.js        # k6 executor scenarios
+      auth/
+        <provider>.js       # Provider-specific auth key generation
+    manifests/
+      k6-test.yaml          # k6-operator TestRun CRD template
+```
+
+## How it works
+
+1. `make configmaps` creates ConfigMaps from the k6 scripts
+2. `make k6-test` runs `envsubst` on `k6-test.yaml` and applies the TestRun CRD
+3. The k6-operator creates initializer, starter, and runner pods
+4. Runners execute the test and push metrics to Prometheus via remote-write
+5. Results are visible in the Grafana dashboard
