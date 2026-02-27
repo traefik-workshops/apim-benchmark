@@ -1,6 +1,6 @@
 locals {
+  # Rate limiting is handled by Hub APIRateLimit CRD (not IngressRoute middleware)
   middleware_refs = compact([
-    var.middlewares.rate_limit.enabled ? "- name: rate-limit" : "",
     local.has_headers ? "- name: headers" : "",
   ])
   middlewares_block = length(local.middleware_refs) > 0 ? "middlewares:\n    ${join("\n    ", local.middleware_refs)}" : ""
