@@ -1,3 +1,15 @@
+variable "gcp_project" {
+  type        = string
+  description = "GCP project ID."
+}
+
+variable "gcp_credentials" {
+  type        = string
+  sensitive   = true
+  default     = ""
+  description = "Path to GCP service account JSON key. Leave empty to use gcloud auth."
+}
+
 variable "cluster_location" {
   type        = string
   default     = "us-west1-a"

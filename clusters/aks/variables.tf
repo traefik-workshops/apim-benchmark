@@ -1,3 +1,10 @@
+variable "azure_subscription_id" {
+  type        = string
+  sensitive   = true
+  default     = ""
+  description = "Azure subscription ID. Leave empty to use az CLI auth."
+}
+
 variable "cluster_location" {
   type        = string
   default     = "westus2"

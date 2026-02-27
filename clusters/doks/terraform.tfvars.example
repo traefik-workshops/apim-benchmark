@@ -1,5 +1,7 @@
-cluster_location  = "us-west-2"
-cluster_node_type = "m5.xlarge"
+do_token = ""
+
+cluster_location  = "nyc3"
+cluster_node_type = "s-4vcpu-8gb"
 
 apim_providers = ["traefik", "kong", "tyk", "gravitee", "envoygateway", "upstream"]
 

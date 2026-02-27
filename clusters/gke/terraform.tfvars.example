@@ -1,5 +1,8 @@
-cluster_location  = "us-iad"
-cluster_node_type = "g6-dedicated-2"
+gcp_project = ""
+# gcp_credentials = "/path/to/service-account.json"
+
+cluster_location  = "us-west1-a"
+cluster_node_type = "e2-standard-4"
 
 apim_providers = ["traefik", "kong", "tyk", "gravitee", "envoygateway", "upstream"]
 

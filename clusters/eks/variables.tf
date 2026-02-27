@@ -1,3 +1,17 @@
+variable "aws_access_key" {
+  type        = string
+  sensitive   = true
+  default     = ""
+  description = "AWS access key ID. Leave empty to use AWS CLI/env auth."
+}
+
+variable "aws_secret_key" {
+  type        = string
+  sensitive   = true
+  default     = ""
+  description = "AWS secret access key. Leave empty to use AWS CLI/env auth."
+}
+
 variable "cluster_location" {
   type        = string
   default     = "us-west-2"

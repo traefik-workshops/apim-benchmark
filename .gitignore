@@ -7,7 +7,8 @@
 **/terraform.cloud.tf
 **/.idea
 
-# Ignore sensitive tfvars but track the default k3d configs
+# Ignore sensitive tfvars (credentials); track *.tfvars.example instead
+**/terraform.tfvars
 **/*.auto.tfvars
 **/secret.tfvars
 **/secrets.tfvars

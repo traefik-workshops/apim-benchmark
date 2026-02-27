@@ -1,3 +1,9 @@
+variable "do_token" {
+  type        = string
+  sensitive   = true
+  description = "DigitalOcean API token."
+}
+
 variable "cluster_location" {
   type        = string
   default     = "nyc3"

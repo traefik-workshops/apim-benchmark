@@ -1,3 +1,9 @@
+variable "linode_token" {
+  type        = string
+  sensitive   = true
+  description = "Linode API token."
+}
+
 variable "cluster_location" {
   type        = string
   default     = "us-iad"
