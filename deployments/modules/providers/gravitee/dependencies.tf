@@ -15,7 +15,7 @@ module "pgsql" {
     }
   }
 
-  depends_on = [kubernetes_namespace.gravitee]
+  depends_on = [kubernetes_namespace_v1.gravitee]
 }
 
 module "redis" {
@@ -35,6 +35,6 @@ module "redis" {
     }
   }
 
-  depends_on = [kubernetes_namespace.gravitee]
+  depends_on = [kubernetes_namespace_v1.gravitee]
 }
 

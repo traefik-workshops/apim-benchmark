@@ -23,7 +23,7 @@ locals {
   }]
 }
 
-resource "kubernetes_namespace" "gravitee" {
+resource "kubernetes_namespace_v1" "gravitee" {
   metadata {
     name = var.namespace
   }
@@ -35,7 +35,7 @@ module "upstream" {
   taint         = var.upstream_taint
   service_count = var.service.count
 
-  depends_on = [kubernetes_namespace.gravitee]
+  depends_on = [kubernetes_namespace_v1.gravitee]
 }
 
 resource "helm_release" "gravitee" {

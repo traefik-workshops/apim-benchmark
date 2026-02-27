@@ -16,7 +16,7 @@ locals {
   }]
 }
 
-resource "kubernetes_namespace" "dependencies" {
+resource "kubernetes_namespace_v1" "dependencies" {
   metadata {
     name = var.namespace
   }
@@ -58,7 +58,7 @@ module "traefik" {
     }
   }
 
-  depends_on = [kubernetes_namespace.dependencies]
+  depends_on = [kubernetes_namespace_v1.dependencies]
 }
 
 
@@ -67,7 +67,7 @@ module "cert-manager" {
 
   namespace = var.namespace
 
-  depends_on = [kubernetes_namespace.dependencies]
+  depends_on = [kubernetes_namespace_v1.dependencies]
 }
 
 module "k6-operator" {
@@ -77,7 +77,7 @@ module "k6-operator" {
   node_selector = { node = var.taint }
   tolerations   = local.tolerations
 
-  depends_on = [kubernetes_namespace.dependencies]
+  depends_on = [kubernetes_namespace_v1.dependencies]
 }
 
 module "keycloak" {
@@ -94,7 +94,7 @@ module "keycloak" {
   }
 
   count      = var.keycloak.enabled ? 1 : 0
-  depends_on = [kubernetes_namespace.dependencies]
+  depends_on = [kubernetes_namespace_v1.dependencies]
 }
 
 
@@ -138,5 +138,5 @@ module "grafana-stack" {
     }
   }
 
-  depends_on = [kubernetes_namespace.dependencies]
+  depends_on = [kubernetes_namespace_v1.dependencies]
 }

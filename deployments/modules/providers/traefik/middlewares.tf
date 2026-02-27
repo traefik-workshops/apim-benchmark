@@ -93,7 +93,7 @@ resource "kubernetes_secret_v1" "api_key" {
   }
 
   count      = var.middlewares.auth.type == "token_iac" ? var.middlewares.auth.app_count : 0
-  depends_on = [kubernetes_namespace.traefik]
+  depends_on = [kubernetes_namespace_v1.traefik]
 }
 
 resource "kubectl_manifest" "managed_app" {

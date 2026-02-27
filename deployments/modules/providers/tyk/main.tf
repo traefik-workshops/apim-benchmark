@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-resource "kubernetes_namespace" "tyk" {
+resource "kubernetes_namespace_v1" "tyk" {
   metadata {
     name = var.namespace
   }
@@ -19,7 +19,7 @@ module "upstream" {
   taint         = var.upstream_taint
   service_count = var.service.count
 
-  depends_on = [kubernetes_namespace.tyk]
+  depends_on = [kubernetes_namespace_v1.tyk]
 }
 
 locals {
@@ -171,7 +171,7 @@ resource "helm_release" "tyk" {
   ]
 
   depends_on = [
-    kubernetes_namespace.tyk,
+    kubernetes_namespace_v1.tyk,
     module.redis,
     kubernetes_config_map.tyk_api_definitions,
   ]

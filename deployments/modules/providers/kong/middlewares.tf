@@ -73,7 +73,7 @@ resource "kubernetes_secret_v1" "kong-key-auth" {
   }
 
   count      = var.middlewares.auth.type == "token_iac" ? var.middlewares.auth.app_count : 0
-  depends_on = [kubernetes_namespace.kong]
+  depends_on = [kubernetes_namespace_v1.kong]
 }
 
 # ---------------------------------------------------------------------------
@@ -134,7 +134,7 @@ resource "kubernetes_secret_v1" "kong-jwt-hmac" {
   }
 
   count      = var.middlewares.auth.type == "jwt_hmac" ? var.middlewares.auth.app_count : 0
-  depends_on = [kubernetes_namespace.kong]
+  depends_on = [kubernetes_namespace_v1.kong]
 }
 
 # JWT consumer + Keycloak RSA credential (jwt_keycloak)
@@ -201,7 +201,7 @@ print(f'-----BEGIN PUBLIC KEY-----\n{wrapped}\n-----END PUBLIC KEY-----')
     auth_type = var.middlewares.auth.type
   }
 
-  depends_on = [kubernetes_namespace.kong]
+  depends_on = [kubernetes_namespace_v1.kong]
 }
 
 # ---------------------------------------------------------------------------

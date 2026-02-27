@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-resource "kubernetes_namespace" "traefik" {
+resource "kubernetes_namespace_v1" "traefik" {
   metadata {
     name = var.namespace
   }
@@ -19,7 +19,7 @@ module "upstream" {
   taint         = var.upstream_taint
   service_count = var.service.count
 
-  depends_on = [kubernetes_namespace.traefik]
+  depends_on = [kubernetes_namespace_v1.traefik]
 }
 
 locals {
@@ -44,7 +44,7 @@ resource "kubernetes_secret_v1" "traefik_hub_license" {
     token = var.traefik_hub_token
   }
 
-  depends_on = [kubernetes_namespace.traefik]
+  depends_on = [kubernetes_namespace_v1.traefik]
 }
 
 resource "helm_release" "traefik" {
@@ -203,5 +203,5 @@ resource "helm_release" "traefik" {
     } : {}))
   ]
 
-  depends_on = [kubernetes_namespace.traefik, kubernetes_secret_v1.traefik_hub_license]
+  depends_on = [kubernetes_namespace_v1.traefik, kubernetes_secret_v1.traefik_hub_license]
 }

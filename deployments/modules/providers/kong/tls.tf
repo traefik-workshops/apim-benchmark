@@ -21,5 +21,5 @@ spec:
 YAML
 
   count      = var.middlewares.tls.enabled ? 1 : 0
-  depends_on = [kubernetes_namespace.kong]
+  depends_on = [kubernetes_namespace_v1.kong]
 }

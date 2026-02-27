@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-resource "kubernetes_namespace" "envoygateway" {
+resource "kubernetes_namespace_v1" "envoygateway" {
   metadata {
     name = var.namespace
   }
@@ -19,7 +19,7 @@ module "upstream" {
   taint         = var.upstream_taint
   service_count = var.service.count
 
-  depends_on = [kubernetes_namespace.envoygateway]
+  depends_on = [kubernetes_namespace_v1.envoygateway]
 }
 
 locals {
@@ -75,7 +75,7 @@ resource "helm_release" "envoygateway" {
     })
   ]
 
-  depends_on = [kubernetes_namespace.envoygateway]
+  depends_on = [kubernetes_namespace_v1.envoygateway]
 }
 
 # ---------------------------------------------------------------------------

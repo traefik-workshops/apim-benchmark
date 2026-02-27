@@ -1,4 +1,4 @@
-resource "kubernetes_namespace" "upstream" {
+resource "kubernetes_namespace_v1" "upstream" {
   metadata {
     name = var.namespace
   }
@@ -10,7 +10,7 @@ module "upstream" {
   taint         = var.taint
   service_count = var.service.count
 
-  depends_on = [kubernetes_namespace.upstream]
+  depends_on = [kubernetes_namespace_v1.upstream]
 }
 
 module "scenarios" {

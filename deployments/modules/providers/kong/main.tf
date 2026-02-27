@@ -19,7 +19,7 @@ locals {
   }]
 }
 
-resource "kubernetes_namespace" "kong" {
+resource "kubernetes_namespace_v1" "kong" {
   metadata {
     name = var.namespace
   }
@@ -31,7 +31,7 @@ module "upstream" {
   taint         = var.upstream_taint
   service_count = var.service.count
 
-  depends_on = [kubernetes_namespace.kong]
+  depends_on = [kubernetes_namespace_v1.kong]
 }
 
 resource "helm_release" "kong" {

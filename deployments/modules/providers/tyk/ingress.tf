@@ -107,7 +107,7 @@ resource "kubernetes_config_map" "tyk_api_definitions" {
 
   data = local.api_definitions
 
-  depends_on = [kubernetes_namespace.tyk]
+  depends_on = [kubernetes_namespace_v1.tyk]
 }
 
 # ---------------------------------------------------------------------------
@@ -140,5 +140,5 @@ resource "kubernetes_config_map" "tyk_policies" {
   }
 
   count      = local.is_jwt_auth ? 1 : 0
-  depends_on = [kubernetes_namespace.tyk]
+  depends_on = [kubernetes_namespace_v1.tyk]
 }
