@@ -1,6 +1,6 @@
 cluster_provider = "lke"
 cluster_location = "us-sea"
-cluster_node_type = "g6-dedicated-8"
+cluster_node_type = "g6-dedicated-2"
 
 apim_providers = ["traefik", "kong", "tyk", "gravitee", "envoygateway", "upstream"]
 
