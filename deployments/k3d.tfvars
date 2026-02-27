@@ -70,36 +70,36 @@ apim_providers_route_count = 1
 # observability: all signals exported via OTLP to opentelemetry-collector.dependencies.svc
 apim_providers_middlewares = {
   auth = {
-    type      = "jwt_keycloak"
+    type      = "disabled"
     app_count = 1
   }
   quota = {
     enabled = false
-    rate    = 100
+    rate    = 999999
     per     = 3600
   }
   rate_limit = {
     enabled = false
-    rate    = 100
+    rate    = 999999
     per     = 1
   }
   tls = {
-    enabled = true
+    enabled = false
   }
   headers = {
     request = {
-      set    = { "X-Benchmark-Req" = "hello" }
-      remove = ["X-Remove-Me"]
+      set    = {}
+      remove = []
     }
     response = {
-      set    = { "X-Benchmark-Resp" = "world" }
-      remove = ["X-Remove-Resp"]
+      set    = {}
+      remove = []
     }
   }
   observability = {
-    metrics = { enabled = true }
+    metrics = { enabled = false }
     logs    = { enabled = false }
-    traces  = { enabled = true }
+    traces  = { enabled = false }
   }
 }
 
