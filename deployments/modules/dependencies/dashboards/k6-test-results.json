@@ -6969,7 +6969,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"tyk\", namespace=\"tyk\"}[5m])) by (node) ",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"tyk\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"tyk\"}) by (node) ",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -6985,7 +6985,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"kong\", namespace=\"kong\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"kong\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"kong\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -6998,7 +6998,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"gravitee\", namespace=\"gravitee\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"gravitee\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"gravitee\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -7011,12 +7011,25 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"traefik\", namespace=\"traefik\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"traefik\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"traefik\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (node)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "CPU Utilization per Service",
@@ -7225,7 +7238,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(container_memory_working_set_bytes{node=\"tyk\", namespace=\"tyk\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"tyk\"} * on(node) group_left() kube_node_labels{label_node=\"tyk\"}) by (node)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -7241,7 +7254,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"kong\", namespace=\"kong\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"kong\"} * on(node) group_left() kube_node_labels{label_node=\"kong\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -7254,7 +7267,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"gravitee\", namespace=\"gravitee\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"gravitee\"} * on(node) group_left() kube_node_labels{label_node=\"gravitee\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -7267,12 +7280,25 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"traefik\", namespace=\"traefik\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"traefik\"} * on(node) group_left() kube_node_labels{label_node=\"traefik\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway\"} * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (node)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Memory Utilization per Service",
@@ -7447,7 +7473,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"tyk\",namespace=\"tyk\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"tyk\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"tyk\"}) by (pod)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -7463,7 +7489,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"kong\",namespace=\"kong\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"kong\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"kong\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -7476,7 +7502,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"gravitee\",namespace=\"gravitee\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"gravitee\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"gravitee\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -7489,12 +7515,25 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"traefik\",namespace=\"traefik\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"traefik\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"traefik\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (pod)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "CPU Utilization per Service Pods",
@@ -7668,7 +7707,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(container_memory_working_set_bytes{node=\"tyk\", namespace=\"tyk\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"tyk\"} * on(node) group_left() kube_node_labels{label_node=\"tyk\"}) by (pod)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -7684,7 +7723,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"kong\", namespace=\"kong\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"kong\"} * on(node) group_left() kube_node_labels{label_node=\"kong\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -7697,7 +7736,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"gravitee\", namespace=\"gravitee\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"gravitee\"} * on(node) group_left() kube_node_labels{label_node=\"gravitee\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -7710,12 +7749,25 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"traefik\", namespace=\"traefik\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"traefik\"} * on(node) group_left() kube_node_labels{label_node=\"traefik\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway\"} * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (pod)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Memory Utilization per Service Pods",
@@ -8106,7 +8158,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"tyk-resources\",namespace=\"tyk\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"tyk\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"tyk\"}) by (node)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -8122,7 +8174,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"kong-resources\",namespace=\"kong\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"kong\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"kong\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -8135,7 +8187,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"gravitee-resources\",namespace=\"gravitee\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"gravitee\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"gravitee\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -8148,12 +8200,25 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"traefik-resources\",namespace=\"traefik\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"traefik\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"traefik\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (node)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "CPU Utilization per Resource",
@@ -8362,7 +8427,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(container_memory_working_set_bytes{node=\"tyk-resources\", namespace=\"tyk\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"tyk\"} * on(node) group_left() kube_node_labels{label_node=\"tyk\"}) by (node)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -8378,7 +8443,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"kong-resources\", namespace=\"kong\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"kong\"} * on(node) group_left() kube_node_labels{label_node=\"kong\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -8391,7 +8456,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"gravitee-resources\", namespace=\"gravitee\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"gravitee\"} * on(node) group_left() kube_node_labels{label_node=\"gravitee\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -8404,12 +8469,25 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"traefik-resources\", namespace=\"traefik\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"traefik\"} * on(node) group_left() kube_node_labels{label_node=\"traefik\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway\"} * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (node)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Memory Utilization per Resource",
@@ -8584,7 +8662,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"tyk-resources\",namespace=\"tyk\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"tyk\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"tyk\"}) by (pod)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -8600,7 +8678,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"kong-resources\",namespace=\"kong\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"kong\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"kong\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -8613,7 +8691,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"gravitee-resources\",namespace=\"gravitee\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"gravitee\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"gravitee\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -8626,12 +8704,25 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"traefik-resources\",namespace=\"traefik\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"traefik\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"traefik\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (pod)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "CPU Utilization per Resource Pods",
@@ -8805,7 +8896,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(container_memory_working_set_bytes{node=\"tyk-resources\", namespace=\"tyk\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"tyk\"} * on(node) group_left() kube_node_labels{label_node=\"tyk\"}) by (pod)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -8821,7 +8912,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"kong-resources\", namespace=\"kong\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"kong\"} * on(node) group_left() kube_node_labels{label_node=\"kong\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -8834,7 +8925,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"gravitee-resources\", namespace=\"gravitee\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"gravitee\"} * on(node) group_left() kube_node_labels{label_node=\"gravitee\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -8847,12 +8938,25 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"traefik-resources\", namespace=\"traefik\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"traefik\"} * on(node) group_left() kube_node_labels{label_node=\"traefik\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway\"} * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (pod)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Memory Utilization per Resource Pods",
@@ -9075,7 +9179,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"tyk-upstream\",namespace=\"tyk-upstream\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"tyk-upstream\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"tyk-upstream\"}) by (node)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -9091,7 +9195,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"kong-upstream\",namespace=\"kong-upstream\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"kong-upstream\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"kong-upstream\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9104,7 +9208,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"gravitee-upstream\",namespace=\"gravitee-upstream\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"gravitee-upstream\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"gravitee-upstream\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9117,7 +9221,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"traefik-upstream\",namespace=\"traefik-upstream\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"traefik-upstream\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"traefik-upstream\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9130,7 +9234,20 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"upstream\",namespace=\"upstream\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway-upstream\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"envoygateway-upstream\"}) by (node)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"upstream\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"upstream\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9344,7 +9461,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(container_memory_working_set_bytes{node=\"tyk-upstream\", namespace=\"tyk-upstream\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"tyk-upstream\"} * on(node) group_left() kube_node_labels{label_node=\"tyk-upstream\"}) by (node)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -9360,7 +9477,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"kong-upstream\", namespace=\"kong-upstream\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"kong-upstream\"} * on(node) group_left() kube_node_labels{label_node=\"kong-upstream\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9373,7 +9490,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"gravitee-upstream\", namespace=\"gravitee-upstream\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"gravitee-upstream\"} * on(node) group_left() kube_node_labels{label_node=\"gravitee-upstream\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9386,7 +9503,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"traefik-upstream\", namespace=\"traefik-upstream\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"traefik-upstream\"} * on(node) group_left() kube_node_labels{label_node=\"traefik-upstream\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9399,7 +9516,20 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"upstream\", namespace=\"upstream\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway-upstream\"} * on(node) group_left() kube_node_labels{label_node=\"envoygateway-upstream\"}) by (node)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"upstream\"} * on(node) group_left() kube_node_labels{label_node=\"upstream\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9499,7 +9629,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"tyk-upstream\",namespace=\"tyk-upstream\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"tyk-upstream\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"tyk-upstream\"}) by (pod)",
           "format": "time_series",
           "fullMetaSearch": false,
           "hide": false,
@@ -9516,7 +9646,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"kong-upstream\",namespace=\"kong-upstream\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"kong-upstream\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"kong-upstream\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9529,7 +9659,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"gravitee-upstream\",namespace=\"gravitee-upstream\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"gravitee-upstream\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"gravitee-upstream\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9542,7 +9672,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"traefik-upstream\",namespace=\"traefik-upstream\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"traefik-upstream\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"traefik-upstream\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9555,7 +9685,20 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"upstream\",namespace=\"upstream\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway-upstream\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"envoygateway-upstream\"}) by (pod)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"upstream\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"upstream\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9654,7 +9797,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(container_memory_working_set_bytes{node=\"tyk-upstream\", namespace=\"tyk-upstream\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"tyk-upstream\"} * on(node) group_left() kube_node_labels{label_node=\"tyk-upstream\"}) by (pod)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -9670,7 +9813,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"kong-upstream\", namespace=\"kong-upstream\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"kong-upstream\"} * on(node) group_left() kube_node_labels{label_node=\"kong-upstream\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9683,7 +9826,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"gravitee-upstream\", namespace=\"gravitee-upstream\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"gravitee-upstream\"} * on(node) group_left() kube_node_labels{label_node=\"gravitee-upstream\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9696,7 +9839,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"traefik-upstream\", namespace=\"traefik-upstream\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"traefik-upstream\"} * on(node) group_left() kube_node_labels{label_node=\"traefik-upstream\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9709,7 +9852,20 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"upstream\", namespace=\"upstream\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway-upstream\"} * on(node) group_left() kube_node_labels{label_node=\"envoygateway-upstream\"}) by (pod)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"upstream\"} * on(node) group_left() kube_node_labels{label_node=\"upstream\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9937,7 +10093,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"tyk-tests\",namespace=\"tyk\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"tyk\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"tyk-loadgen\"}) by (node)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -9953,7 +10109,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"kong-tests\",namespace=\"kong\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"kong\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"kong-loadgen\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9966,7 +10122,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"gravitee-tests\",namespace=\"gravitee\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"gravitee\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"gravitee-loadgen\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9979,7 +10135,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"traefik-tests\",namespace=\"traefik\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"traefik\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"traefik-loadgen\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9992,7 +10148,20 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"upstream-tests\",namespace=\"upstream\"}[5m])) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"envoygateway-loadgen\"}) by (node)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"upstream\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"upstream-loadgen\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -10206,7 +10375,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(container_memory_working_set_bytes{node=\"tyk-tests\", namespace=\"tyk\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"tyk\"} * on(node) group_left() kube_node_labels{label_node=\"tyk-loadgen\"}) by (node)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -10222,7 +10391,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"kong-tests\", namespace=\"kong\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"kong\"} * on(node) group_left() kube_node_labels{label_node=\"kong-loadgen\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -10235,7 +10404,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"gravitee-tests\", namespace=\"gravitee\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"gravitee\"} * on(node) group_left() kube_node_labels{label_node=\"gravitee-loadgen\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -10248,7 +10417,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"traefik-tests\", namespace=\"traefik\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"traefik\"} * on(node) group_left() kube_node_labels{label_node=\"traefik-loadgen\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -10261,7 +10430,20 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"upstream-tests\", namespace=\"upstream\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway\"} * on(node) group_left() kube_node_labels{label_node=\"envoygateway-loadgen\"}) by (node)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"upstream\"} * on(node) group_left() kube_node_labels{label_node=\"upstream-loadgen\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -10361,7 +10543,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"tyk-tests\",namespace=\"tyk\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"tyk\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"tyk-loadgen\"}) by (pod)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -10377,7 +10559,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"kong-tests\",namespace=\"kong\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"kong\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"kong-loadgen\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -10390,7 +10572,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"gravitee-tests\",namespace=\"gravitee\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"gravitee\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"gravitee-loadgen\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -10403,7 +10585,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"traefik-tests\",namespace=\"traefik\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"traefik\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"traefik-loadgen\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -10416,7 +10598,20 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"upstream-tests\",namespace=\"upstream\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"envoygateway-loadgen\"}) by (pod)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"upstream\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"upstream-loadgen\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -10515,7 +10710,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(container_memory_working_set_bytes{node=\"tyk-tests\", namespace=\"tyk\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"tyk\"} * on(node) group_left() kube_node_labels{label_node=\"tyk-loadgen\"}) by (pod)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -10531,7 +10726,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"kong-tests\", namespace=\"kong\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"kong\"} * on(node) group_left() kube_node_labels{label_node=\"kong-loadgen\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -10544,7 +10739,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"gravitee-tests\", namespace=\"gravitee\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"gravitee\"} * on(node) group_left() kube_node_labels{label_node=\"gravitee-loadgen\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -10557,7 +10752,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"traefik-tests\", namespace=\"traefik\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"traefik\"} * on(node) group_left() kube_node_labels{label_node=\"traefik-loadgen\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -10570,7 +10765,20 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{node=\"upstream-tests\", namespace=\"upstream\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway\"} * on(node) group_left() kube_node_labels{label_node=\"envoygateway-loadgen\"}) by (pod)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"upstream\"} * on(node) group_left() kube_node_labels{label_node=\"upstream-loadgen\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -10683,7 +10891,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(container_cpu_usage_seconds_total{node=\"dependencies\",namespace=\"dependencies\"}[5m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"dependencies\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"dependencies\"}) by (pod)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -10785,7 +10993,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(container_memory_working_set_bytes{node=\"dependencies\", namespace=\"dependencies\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"dependencies\"} * on(node) group_left() kube_node_labels{label_node=\"dependencies\"}) by (pod)",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -10981,6 +11189,19 @@
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"envoygateway\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Gateways",
@@ -11108,7 +11329,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"tyk-resources\"})",
+          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"tyk\"})",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -11123,7 +11344,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"kong-resources\"})",
+          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"kong\"})",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -11136,7 +11357,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"gravitee-resources\"})",
+          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"gravitee\"})",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -11149,12 +11370,25 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"traefik-resources\"})",
+          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"traefik\"})",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"envoygateway\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Gateways Resources",
@@ -11425,6 +11659,19 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
+          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"envoygateway-upstream\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
           "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"upstream\"})",
           "hide": false,
           "instant": false,
@@ -11573,7 +11820,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"tyk-tests\"})",
+          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"tyk-loadgen\"})",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -11588,7 +11835,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"kong-tests\"})",
+          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"kong-loadgen\"})",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -11601,7 +11848,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"gravitee-tests\"})",
+          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"gravitee-loadgen\"})",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -11614,7 +11861,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"traefik-tests\"})",
+          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"traefik-loadgen\"})",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -11627,7 +11874,20 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"upstream-tests\"})",
+          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"envoygateway-loadgen\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "count by (label_beta_kubernetes_io_instance_type) (kube_node_labels{label_node=\"upstream-loadgen\"})",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
