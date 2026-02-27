@@ -19,7 +19,7 @@ locals {
     "  telemetry:",
     local.tracing_enabled ? "    tracing:\n      provider:\n        type: OpenTelemetry\n        host: opentelemetry-collector.dependencies.svc\n        port: 4317\n      customTags:\n        service.name:\n          type: Literal\n          literal:\n            value: envoygateway" : "",
     local.metrics_enabled ? "    metrics:\n      prometheus:\n        disable: true\n      sinks:\n      - type: OpenTelemetry\n        openTelemetry:\n          host: opentelemetry-collector.dependencies.svc\n          port: 4317" : "",
-    local.logs_enabled ? "    accessLog:\n      settings:\n      - sinks:\n        - type: OpenTelemetry\n          openTelemetry:\n            host: opentelemetry-collector.dependencies.svc\n            port: 4317\n            resources:\n              service.name:\n                type: Literal\n                literal:\n                  value: envoygateway" : "",
+    local.logs_enabled ? "    accessLog:\n      settings:\n      - sinks:\n        - type: OpenTelemetry\n          openTelemetry:\n            host: opentelemetry-collector.dependencies.svc\n            port: 4317\n            resources:\n              service.name: envoygateway" : "",
   ])) : ""
 }
 
