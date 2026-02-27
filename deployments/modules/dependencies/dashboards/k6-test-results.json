@@ -51,7 +51,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -60,7 +60,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -153,7 +153,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -240,7 +240,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -249,7 +249,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -342,7 +342,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -428,7 +428,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "fieldMinMax": false,
@@ -437,7 +437,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -530,7 +530,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -614,7 +614,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -623,7 +623,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -716,7 +716,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -803,7 +803,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -812,7 +812,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -905,7 +905,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -992,7 +992,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -1001,7 +1001,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -1094,7 +1094,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -1181,7 +1181,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -1190,7 +1190,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -1283,7 +1283,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -1369,7 +1369,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "mappings": [],
@@ -1377,7 +1377,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -1470,7 +1470,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -1553,7 +1553,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "mappings": [],
@@ -1561,7 +1561,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -1654,7 +1654,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -1737,7 +1737,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "mappings": [],
@@ -1745,7 +1745,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -1838,7 +1838,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -1922,7 +1922,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -1932,7 +1932,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -2025,7 +2025,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -2114,7 +2114,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -2123,7 +2123,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -2216,7 +2216,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -2303,7 +2303,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -2312,7 +2312,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -2405,7 +2405,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -2491,7 +2491,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "mappings": [],
@@ -2499,7 +2499,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -2592,7 +2592,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -2675,7 +2675,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "mappings": [],
@@ -2683,7 +2683,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -2776,7 +2776,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -2859,7 +2859,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "mappings": [],
@@ -2867,7 +2867,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -2960,7 +2960,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -3056,7 +3056,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -3158,7 +3158,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -3381,7 +3381,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               }
@@ -3652,7 +3652,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               }
@@ -3811,7 +3811,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -3913,7 +3913,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -3996,7 +3996,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "mappings": [],
@@ -4097,7 +4097,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -4181,7 +4181,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "mappings": [],
@@ -4282,7 +4282,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -4366,7 +4366,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "mappings": [],
@@ -4467,7 +4467,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -4653,7 +4653,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -4738,7 +4738,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -4840,7 +4840,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -4925,7 +4925,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -5027,7 +5027,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -5112,7 +5112,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -5214,7 +5214,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -5299,7 +5299,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "mappings": [],
@@ -5400,7 +5400,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -5621,7 +5621,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -5708,7 +5708,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -5811,7 +5811,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -6031,7 +6031,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               }
@@ -6118,7 +6118,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -6220,7 +6220,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -6442,7 +6442,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               }
@@ -6457,7 +6457,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               }
@@ -6671,7 +6671,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               }
@@ -6686,7 +6686,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               }
@@ -6910,7 +6910,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -7166,7 +7166,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -8047,7 +8047,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -8303,7 +8303,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -9016,7 +9016,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -9285,7 +9285,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -9878,7 +9878,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -10147,7 +10147,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               },
@@ -10821,7 +10821,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -10995,7 +10995,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -11169,7 +11169,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -11178,7 +11178,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#8438fa",
+                "color": "#EEFF41",
                 "value": null
               }
             ]
@@ -11243,7 +11243,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -11329,7 +11329,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               }
@@ -11445,7 +11445,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -11531,7 +11531,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#8438fa",
+                  "fixedColor": "#EEFF41",
                   "mode": "fixed"
                 }
               }
@@ -11660,7 +11660,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -11850,7 +11850,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -12040,7 +12040,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -12230,7 +12230,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -12420,7 +12420,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -12611,7 +12611,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -12802,7 +12802,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
@@ -12992,7 +12992,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "#8438fa",
+            "fixedColor": "#EEFF41",
             "mode": "fixed"
           },
           "decimals": 2,
