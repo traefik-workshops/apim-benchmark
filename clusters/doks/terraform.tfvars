@@ -1,7 +1,5 @@
-cluster_provider = "aks"
-cluster_location = "westus2"
-cluster_node_type = "Standard_D4s_v3"
-resource_group_name = "benchmark-rg"
+cluster_location  = "nyc3"
+cluster_node_type = "s-4vcpu-8gb"
 
 apim_providers = ["traefik", "kong", "tyk", "gravitee", "envoygateway", "upstream"]
 

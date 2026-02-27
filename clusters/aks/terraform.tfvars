@@ -1,6 +1,6 @@
-cluster_provider = "eks"
-cluster_location = "us-west-2"
-cluster_node_type = "m5.xlarge"
+cluster_location    = "westus2"
+cluster_node_type   = "Standard_D4s_v3"
+resource_group_name = "benchmark-rg"
 
 apim_providers = ["traefik", "kong", "tyk", "gravitee", "envoygateway", "upstream"]
 

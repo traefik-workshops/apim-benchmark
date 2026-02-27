@@ -1,6 +1,5 @@
-cluster_provider = "doks"
-cluster_location = "nyc3"
-cluster_node_type = "s-4vcpu-8gb"
+cluster_location  = "us-iad"
+cluster_node_type = "g6-dedicated-2"
 
 apim_providers = ["traefik", "kong", "tyk", "gravitee", "envoygateway", "upstream"]
 

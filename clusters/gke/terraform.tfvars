@@ -1,4 +1,5 @@
-cluster_provider = "k3d"
+cluster_location  = "us-west1-a"
+cluster_node_type = "e2-standard-4"
 
 apim_providers = ["traefik", "kong", "tyk", "gravitee", "envoygateway", "upstream"]
 

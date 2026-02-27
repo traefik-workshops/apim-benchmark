@@ -1,7 +1,5 @@
-cluster_provider = "oke"
-cluster_location = "us-chicago-1"
-cluster_node_type = "VM.Standard.E4.Flex"
-# compartment_id = "ocid1.compartment.oc1..your-compartment-id-here"
+cluster_location  = "us-west-2"
+cluster_node_type = "m5.xlarge"
 
 apim_providers = ["traefik", "kong", "tyk", "gravitee", "envoygateway", "upstream"]
 
