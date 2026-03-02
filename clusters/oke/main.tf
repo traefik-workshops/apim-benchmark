@@ -11,9 +11,9 @@ module "shared" {
 module "oke" {
   source = "git::https://github.com/traefik-workshops/terraform-demo-modules.git//compute/oracle/oke?ref=main"
 
-  cluster_name       = "benchmark"
-  cluster_node_type  = var.cluster_node_type
-  cluster_node_count = module.shared.cloud_node_count
-  cluster_location   = var.cluster_location
-  compartment_id     = var.compartment_id
+  cluster_name      = "benchmark"
+  cluster_node_type = var.cluster_node_type
+  cluster_location  = var.cluster_location
+  compartment_id    = var.compartment_id
+  worker_nodes      = module.shared.all_nodes
 }

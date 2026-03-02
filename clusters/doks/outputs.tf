@@ -3,5 +3,5 @@ output "kube_context" {
 }
 
 output "node_count" {
-  value = module.shared.cloud_node_count
+  value = length(module.shared.all_nodes)
 }

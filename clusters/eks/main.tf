@@ -11,8 +11,8 @@ module "shared" {
 module "eks" {
   source = "git::https://github.com/traefik-workshops/terraform-demo-modules.git//compute/aws/eks?ref=main"
 
-  cluster_name       = "benchmark"
-  cluster_node_type  = var.cluster_node_type
-  cluster_node_count = module.shared.cloud_node_count
-  cluster_location   = var.cluster_location
+  cluster_name      = "benchmark"
+  cluster_node_type = var.cluster_node_type
+  cluster_location  = var.cluster_location
+  worker_nodes      = module.shared.all_nodes
 }

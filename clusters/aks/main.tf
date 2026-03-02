@@ -18,7 +18,7 @@ module "aks" {
 
   cluster_name        = "apim-benchmark"
   cluster_node_type   = var.cluster_node_type
-  cluster_node_count  = module.shared.cloud_node_count
   cluster_location    = var.cluster_location
   resource_group_name = azurerm_resource_group.benchmark.name
+  worker_nodes        = module.shared.all_nodes
 }
