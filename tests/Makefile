@@ -73,7 +73,7 @@ configmaps: ## Apply k6 script ConfigMaps for PROVIDER
 		-n $(PROVIDER) --dry-run=client -o yaml | $(KUBECTL) apply -f -
 	@echo "    ConfigMaps applied."
 
-k6-test: ## Apply k6 test CRD for PROVIDER
+k6-test: configmaps ## Apply k6 test CRD for PROVIDER
 	@echo "==> Submitting k6 test for $(PROVIDER)..."
 	@export PROVIDER=$(PROVIDER) \
 		SERVICE_NAME=$(SERVICE_NAME) \

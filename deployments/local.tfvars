@@ -16,8 +16,6 @@ upstream = {
 }
 
 # --- Providers --------------------------------------------------------------
-# All 5 APIM providers enabled for benchmarking.
-# Override with -var on the CLI or edit this file to disable providers.
 apim_providers = {
   traefik = {
     enabled = true
@@ -66,8 +64,6 @@ apim_providers_service = {
 apim_providers_route_count = 1
 
 # --- Middlewares ---------------------------------------------------------------
-# auth.type: "disabled" | "token_postgres" | "token_iac" | "jwt_hmac" | "jwt_keycloak"
-# observability: all signals exported via OTLP to opentelemetry-collector.dependencies.svc
 apim_providers_middlewares = {
   auth = {
     type      = "disabled"
