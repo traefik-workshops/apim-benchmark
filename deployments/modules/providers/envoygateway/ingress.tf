@@ -37,6 +37,14 @@ spec:
       envoyDeployment:
         container:
           resources: null
+        pod:
+          nodeSelector:
+            node: ${var.taint}
+          tolerations:
+          - key: node
+            operator: Equal
+            value: ${var.taint}
+            effect: NoSchedule
       envoyService:
         type: ClusterIP
 ${local.telemetry_block}

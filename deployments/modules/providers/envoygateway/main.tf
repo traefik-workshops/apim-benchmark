@@ -55,6 +55,12 @@ resource "helm_release" "envoygateway" {
             limits   = var.deployment.resources.limits
           } : null
         }
+        pod = {
+          nodeSelector = {
+            node = var.taint
+          }
+          tolerations = local.tolerations
+        }
       }
 
       config = {
