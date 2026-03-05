@@ -135,7 +135,11 @@ module "grafana-stack" {
       metricLabelsAllowlist = ["nodes=[*]"]
     }
     prometheus-node-exporter = {
-      tolerations = local.tolerations
+      tolerations = [{
+        key      = "node"
+        operator = "Exists"
+        effect   = "NoSchedule"
+      }]
     }
   }
 

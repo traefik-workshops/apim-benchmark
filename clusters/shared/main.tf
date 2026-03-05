@@ -24,15 +24,15 @@ locals {
   ]
 
   dependencies_node = [{
-    taint = "dependencies"
+    taint = ""
     label = "dependencies"
     count = var.dependencies_node_count
   }]
 
   all_nodes = concat(
+    local.dependencies_node,
     local.provider_nodes,
     local.upstream_nodes,
-    local.loadgen_nodes,
-    local.dependencies_node
+    local.loadgen_nodes
   )
 }
