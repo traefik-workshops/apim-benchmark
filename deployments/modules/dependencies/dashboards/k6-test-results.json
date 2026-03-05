@@ -6638,10 +6638,6 @@
                   "fixedColor": "#953984",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Envoy Gateway"
               }
             ]
           }
@@ -7102,10 +7098,6 @@
                   "fixedColor": "#953984",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Envoy Gateway"
               }
             ]
           }
@@ -7350,10 +7342,6 @@
                   "fixedColor": "#953984",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Envoy Gateway"
               }
             ]
           }
@@ -7689,7 +7677,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway\"}[5m])) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -7977,7 +7965,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway\"} * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -8231,7 +8219,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway\"}[5m])) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -8484,7 +8472,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway\"} * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -8970,7 +8958,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (node)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway\"}[5m])) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9258,7 +9246,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway\"} * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (node)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway\"}) by (node)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9512,7 +9500,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway\"}[5m]) * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"envoygateway\"}[5m])) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -9765,7 +9753,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway\"} * on(node) group_left() kube_node_labels{label_node=\"envoygateway\"}) by (pod)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"envoygateway\"}) by (pod)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
