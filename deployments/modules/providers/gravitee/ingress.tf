@@ -51,6 +51,58 @@ locals {
 }
 
 # ---------------------------------------------------------------------------
+# Readiness gate — the GKO admission webhook validates every ApiDefinition
+# by round-tripping through http://gravitee-apim-api:83/management/.../import-crd
+# On a cold apply the apim-api pod has usually just become Ready (pod-level
+# TCP check) but its Spring Boot management endpoint is still initialising,
+# so the very first kubectl_manifest.api fails with "connection refused".
+#
+# We poll the Management API from inside the cluster using an ephemeral curl
+# pod until it responds with 2xx, then let the ApiDefinition apply.
+# ---------------------------------------------------------------------------
+resource "null_resource" "wait_apim_api" {
+  triggers = {
+    # Re-run on every apply so we don't cache a stale "ready" outcome from a
+    # previous terraform run.
+    helm_release = helm_release.gravitee.id
+    run_id       = timestamp()
+  }
+
+  provisioner "local-exec" {
+    interpreter = ["bash", "-c"]
+    command     = <<-EOT
+      set -e
+      NS=${var.namespace}
+      echo "Waiting for Gravitee APIM Management API to accept requests..."
+      # The webhook does a PUT to .../apis/import-crd. That endpoint returns
+      # 4xx on the probe payload (e.g. "invalid body") — we treat ANY HTTP
+      # response as "server is up" since the original failure mode is
+      # connection-refused / 5xx. Once TCP is accepting and the server
+      # routes requests, the admission webhook succeeds.
+      for i in $(seq 1 60); do
+        code=$(kubectl -n "$NS" run gravitee-healthcheck-$$ \
+          --rm -i --restart=Never --quiet \
+          --image=curlimages/curl:8.6.0 -- \
+          curl -s -o /dev/null -w "%%{http_code}" -m 5 -u admin:admin \
+          "http://gravitee-apim-api.$NS.svc:83/management/v2/environments/DEFAULT" \
+          2>/dev/null || echo 000)
+        case "$code" in
+          2??|400|401|403|404)
+            echo "Management API ready (HTTP $code) after $((i*5))s"
+            exit 0
+            ;;
+        esac
+        sleep 5
+      done
+      echo "Management API did not become ready within 300s (last code: $code)"
+      exit 1
+    EOT
+  }
+
+  depends_on = [helm_release.gravitee, helm_release.gravitee-operator, kubectl_manifest.gravitee-context]
+}
+
+# ---------------------------------------------------------------------------
 # Single API definition — adjusts plan security and flow policies based on
 # middleware configuration. Using one resource avoids GKO operator race
 # conditions that occur when destroying + recreating with the same k8s name.
@@ -162,7 +214,7 @@ spec:
         target: "http://fortio-${count.index % var.service.count}.${var.namespace}.svc:8080"
 YAML
   count      = var.route_count
-  depends_on = [helm_release.gravitee, helm_release.gravitee-operator, kubectl_manifest.gravitee-context]
+  depends_on = [null_resource.wait_apim_api]
 }
 
 # ---------------------------------------------------------------------------
@@ -192,7 +244,7 @@ spec:
       clientId: "${local.jwt_app_client_id}"
 YAML
 
-  depends_on = [helm_release.gravitee, helm_release.gravitee-operator, kubectl_manifest.gravitee-context]
+  depends_on = [null_resource.wait_apim_api]
 }
 
 resource "kubectl_manifest" "jwt_subscription" {
