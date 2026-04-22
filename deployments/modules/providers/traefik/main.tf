@@ -51,6 +51,7 @@ resource "helm_release" "traefik" {
   name       = "traefik"
   repository = "https://traefik.github.io/charts"
   chart      = "traefik"
+  version    = "39.0.8"
 
   namespace = var.namespace
   atomic    = true
@@ -62,7 +63,7 @@ resource "helm_release" "traefik" {
       image = var.traefik_hub_token != "" ? {
         registry   = "ghcr.io"
         repository = "traefik/traefik-hub"
-        tag        = "v3.19.0"
+        tag        = "v3.19.4"
         } : {
         tag = var.gateway_version
       }
