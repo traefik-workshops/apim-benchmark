@@ -38,7 +38,7 @@ resource "helm_release" "tyk" {
   name       = "tyk"
   repository = "https://helm.tyk.io/public/helm/charts"
   chart      = "tyk-oss"
-  version    = "5.1.1"
+  version    = var.chart_version
 
   namespace = var.namespace
   atomic    = true

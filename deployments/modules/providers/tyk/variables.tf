@@ -19,6 +19,11 @@ variable "gateway_version" {
   type = string
 }
 
+variable "chart_version" {
+  type        = string
+  description = "Tyk OSS Helm chart version."
+}
+
 variable "deployment" {
   type = object({
     type          = string

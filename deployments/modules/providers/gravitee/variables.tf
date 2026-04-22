@@ -19,6 +19,11 @@ variable "gateway_version" {
   type = string
 }
 
+variable "chart_version" {
+  type        = string
+  description = "Gravitee APIM Helm chart version."
+}
+
 variable "deployment" {
   type = object({
     type          = string

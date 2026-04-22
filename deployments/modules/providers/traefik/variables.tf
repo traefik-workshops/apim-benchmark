@@ -18,6 +18,11 @@ variable "gateway_version" {
   type = string
 }
 
+variable "chart_version" {
+  type        = string
+  description = "Traefik Helm chart version."
+}
+
 variable "deployment" {
   type = object({
     type          = string

@@ -42,7 +42,7 @@ resource "helm_release" "gravitee" {
   name       = "gravitee"
   repository = "https://helm.gravitee.io"
   chart      = "apim"
-  version    = "4.11.4"
+  version    = var.chart_version
 
   namespace = var.namespace
   atomic    = false

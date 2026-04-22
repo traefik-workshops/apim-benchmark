@@ -13,9 +13,10 @@ locals {
 module "dependencies" {
   source = "./modules/dependencies"
 
-  taint        = var.node_taints.dependencies
-  domain       = var.domain
-  service_type = var.dependencies_service_type
+  taint                 = var.node_taints.dependencies
+  domain                = var.domain
+  service_type          = var.dependencies_service_type
+  traefik_chart_version = local.chart_versions.dep_traefik
 
   dns_traefiker = {
     enabled     = var.dns_traefiker.enabled
@@ -52,6 +53,7 @@ module "traefik" {
 
   namespace         = "traefik"
   gateway_version   = var.apim_providers.traefik.version
+  chart_version     = local.chart_versions.traefik
   taint             = var.node_taints.traefik
   upstream_taint    = var.node_taints.traefik-upstream
   loadgen_taint     = var.node_taints.traefik-loadgen
@@ -72,6 +74,7 @@ module "kong" {
 
   namespace       = "kong"
   gateway_version = var.apim_providers.kong.version
+  chart_version   = local.chart_versions.kong
   taint           = var.node_taints.kong
   upstream_taint  = var.node_taints.kong-upstream
   loadgen_taint   = var.node_taints.kong-loadgen
@@ -92,6 +95,7 @@ module "tyk" {
 
   namespace       = "tyk"
   gateway_version = var.apim_providers.tyk.version
+  chart_version   = local.chart_versions.tyk
   taint           = var.node_taints.tyk
   upstream_taint  = var.node_taints.tyk-upstream
   loadgen_taint   = var.node_taints.tyk-loadgen
@@ -112,6 +116,7 @@ module "gravitee" {
 
   namespace       = "gravitee"
   gateway_version = var.apim_providers.gravitee.version
+  chart_version   = local.chart_versions.gravitee
   taint           = var.node_taints.gravitee
   upstream_taint  = var.node_taints.gravitee-upstream
   loadgen_taint   = var.node_taints.gravitee-loadgen

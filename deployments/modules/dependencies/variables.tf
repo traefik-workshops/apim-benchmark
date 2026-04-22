@@ -19,6 +19,11 @@ variable "service_type" {
   description = "Service type for the dependencies Traefik instance."
 }
 
+variable "traefik_chart_version" {
+  type        = string
+  description = "Helm chart version for the dependencies-namespace Traefik ingress."
+}
+
 variable "dns_traefiker" {
   type = object({
     enabled     = bool
