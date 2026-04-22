@@ -16,11 +16,20 @@ module "redis" {
   replicaCount = 0
 
   extra_values = {
-    master = {
-      resources = {
-        requests = null
-        limits   = null
-      }
+    nodeSelector = { node = var.taint }
+    tolerations = [{
+      key      = "node"
+      operator = "Equal"
+      value    = var.taint
+      effect   = "NoSchedule"
+    }]
+    # Ephemeral storage — benchmark is short-lived and does not test durability;
+    # emptyDir avoids local-path PV node-affinity conflicts when reassigning
+    # the backing store between provider nodes.
+    persistence = { enabled = false }
+    resources = {
+      requests = null
+      limits   = null
     }
   }
 
