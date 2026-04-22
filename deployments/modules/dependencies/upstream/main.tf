@@ -27,6 +27,9 @@ resource "kubernetes_deployment" "fortio" {
             protocol       = "TCP"
           }
         }
+        node_selector = {
+          node = var.taint
+        }
         toleration {
           key      = "node"
           operator = "Equal"
