@@ -16,96 +16,53 @@ SHELL := /bin/bash
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
+# CLUSTER_PROVIDER selects which clusters/<dir>/ terraform module to run.
+# For k3d, the module auto-loads clusters/k3d/terraform.tfvars. Cloud modules
+# do the same.
+#
+# DEPLOY_TFVARS picks the deployments/ tfvars file. For k3d we use local.tfvars
+# (context=k3d-benchmark); anything else uses cloud.tfvars (context=gke-benchmark
+# by default — override with -var kubernetes_config_context=<ctx>).
 CLUSTER_PROVIDER ?= k3d
-TFVARS           ?= $(CLUSTER_PROVIDER).tfvars
+CLUSTER_DIR      := clusters/$(CLUSTER_PROVIDER)
+DEPLOY_TFVARS    ?= $(if $(filter k3d,$(CLUSTER_PROVIDER)),local.tfvars,cloud.tfvars)
 TF_FLAGS         ?=
 
-PROVIDERS        ?= traefik
-ALL_PROVIDERS    := traefik kong tyk gravitee envoygateway
+# Providers enabled by default in the tfvars file. If you need to deploy a
+# subset, override apim_providers via -var='apim_providers={...}' using the
+# values already pinned in local.tfvars/cloud.tfvars.
+ALL_PROVIDERS    := traefik kong tyk gravitee envoygateway upstream
 
 KUBECONFIG       ?= $(HOME)/.kube/config
 KUBE_CONTEXT     ?= k3d-benchmark
-
-# ---------------------------------------------------------------------------
-# Terraform helpers
-# ---------------------------------------------------------------------------
-define tf_init
-	cd $(1) && terraform init -upgrade $(TF_FLAGS)
-endef
-
-define tf_apply
-	cd $(1) && terraform apply -auto-approve -var-file=$(2) $(TF_FLAGS)
-endef
-
-define tf_destroy
-	cd $(1) && terraform destroy -auto-approve -var-file=$(2) $(TF_FLAGS)
-endef
-
-define tf_validate
-	cd $(1) && terraform fmt -check && terraform validate
-endef
 
 # ---------------------------------------------------------------------------
 # Cluster targets
 # ---------------------------------------------------------------------------
 .PHONY: cluster cluster-init cluster-destroy
 
-cluster-init: ## Initialize cluster Terraform module
-	$(call tf_init,clusters)
+cluster-init: ## terraform init for clusters/$(CLUSTER_PROVIDER)
+	cd $(CLUSTER_DIR) && terraform init -upgrade $(TF_FLAGS)
 
-cluster: cluster-init ## Create the k8s cluster
-	$(call tf_apply,clusters,$(TFVARS))
+cluster: cluster-init ## Create the k8s cluster (uses $(CLUSTER_DIR)/terraform.tfvars)
+	cd $(CLUSTER_DIR) && terraform apply -auto-approve $(TF_FLAGS)
 
 cluster-destroy: ## Destroy the k8s cluster
-	$(call tf_destroy,clusters,$(TFVARS))
+	cd $(CLUSTER_DIR) && terraform destroy -auto-approve $(TF_FLAGS)
 
 # ---------------------------------------------------------------------------
 # Deployment targets
 # ---------------------------------------------------------------------------
-.PHONY: deploy-init deploy deploy-destroy deploy-traefik deploy-kong deploy-tyk deploy-gravitee deploy-envoygateway deploy-all
+.PHONY: deploy-init deploy deploy-destroy
 
 deploy-init: ## Initialize deployments Terraform module
-	$(call tf_init,deployments)
+	cd deployments && terraform init -upgrade $(TF_FLAGS)
 
-deploy: deploy-init ## Deploy with current tfvars (use TFVARS= to override)
-	$(call tf_apply,deployments,$(TFVARS))
+deploy: deploy-init ## Deploy using $(DEPLOY_TFVARS) — all 5 providers per tfvars
+	cd deployments && terraform apply -auto-approve -var-file=$(DEPLOY_TFVARS) $(TF_FLAGS)
 
 deploy-destroy: ## Destroy all deployments
-	$(call tf_destroy,deployments,$(TFVARS))
-
-# Helper: base providers var with all disabled
-APIM_PROVIDERS_OFF := traefik={enabled=false,version="v3.6.8"},kong={enabled=false,version="3.9"},tyk={enabled=false,version="v5.8"},gravitee={enabled=false,version="4.10"},envoygateway={enabled=false,version="v1.3.0"}
-APIM_PROVIDERS_ALL := traefik={enabled=true,version="v3.6.8"},kong={enabled=true,version="3.9"},tyk={enabled=true,version="v5.8"},gravitee={enabled=true,version="4.10"},envoygateway={enabled=true,version="v1.3.0"}
-
-deploy-traefik: deploy-init ## Deploy with only Traefik enabled
-	cd deployments && terraform apply -auto-approve -var-file=$(TFVARS) \
-		-var='apim_providers={traefik={enabled=true,version="v3.6.8"},kong={enabled=false,version="3.9"},tyk={enabled=false,version="v5.8"},gravitee={enabled=false,version="4.10"},envoygateway={enabled=false,version="v1.3.0"}}' \
-		$(TF_FLAGS)
-
-deploy-kong: deploy-init ## Deploy with only Kong enabled
-	cd deployments && terraform apply -auto-approve -var-file=$(TFVARS) \
-		-var='apim_providers={traefik={enabled=false,version="v3.6.8"},kong={enabled=true,version="3.9"},tyk={enabled=false,version="v5.8"},gravitee={enabled=false,version="4.10"},envoygateway={enabled=false,version="v1.3.0"}}' \
-		$(TF_FLAGS)
-
-deploy-tyk: deploy-init ## Deploy with only Tyk enabled
-	cd deployments && terraform apply -auto-approve -var-file=$(TFVARS) \
-		-var='apim_providers={traefik={enabled=false,version="v3.6.8"},kong={enabled=false,version="3.9"},tyk={enabled=true,version="v5.8"},gravitee={enabled=false,version="4.10"},envoygateway={enabled=false,version="v1.3.0"}}' \
-		$(TF_FLAGS)
-
-deploy-gravitee: deploy-init ## Deploy with only Gravitee enabled
-	cd deployments && terraform apply -auto-approve -var-file=$(TFVARS) \
-		-var='apim_providers={traefik={enabled=false,version="v3.6.8"},kong={enabled=false,version="3.9"},tyk={enabled=false,version="v5.8"},gravitee={enabled=true,version="4.10"},envoygateway={enabled=false,version="v1.3.0"}}' \
-		$(TF_FLAGS)
-
-deploy-envoygateway: deploy-init ## Deploy with only Envoy Gateway enabled
-	cd deployments && terraform apply -auto-approve -var-file=$(TFVARS) \
-		-var='apim_providers={traefik={enabled=false,version="v3.6.8"},kong={enabled=false,version="3.9"},tyk={enabled=false,version="v5.8"},gravitee={enabled=false,version="4.10"},envoygateway={enabled=true,version="v1.3.0"}}' \
-		$(TF_FLAGS)
-
-deploy-all: deploy-init ## Deploy all providers
-	cd deployments && terraform apply -auto-approve -var-file=$(TFVARS) \
-		-var='apim_providers={$(APIM_PROVIDERS_ALL)}' \
-		$(TF_FLAGS)
+	cd deployments && terraform destroy -auto-approve -var-file=$(DEPLOY_TFVARS) $(TF_FLAGS)
 
 # ---------------------------------------------------------------------------
 # Test targets
@@ -147,18 +104,14 @@ test-clean: ## Clean up all test resources
 # ---------------------------------------------------------------------------
 .PHONY: up up-all teardown clean status
 
-up: cluster deploy-traefik ## Quick start: cluster + Traefik
+up: cluster deploy ## Quick start: cluster + all providers per tfvars
 	@echo ""
-	@echo "Ready! Run 'make test-traefik' to start benchmarking."
-
-up-all: cluster deploy-all ## Full setup: cluster + all providers
-	@echo ""
-	@echo "Ready! Run 'make test-all' to benchmark all providers."
+	@echo "Ready! Run 'make test-all' to benchmark all enabled providers."
 
 teardown: deploy-destroy cluster-destroy ## Destroy deployments then cluster
 
 clean: teardown ## Full cleanup including Terraform state
-	rm -rf clusters/.terraform clusters/.terraform.lock.hcl clusters/terraform.tfstate*
+	rm -rf $(CLUSTER_DIR)/.terraform $(CLUSTER_DIR)/.terraform.lock.hcl $(CLUSTER_DIR)/terraform.tfstate*
 	rm -rf deployments/.terraform deployments/.terraform.lock.hcl deployments/terraform.tfstate*
 
 status: ## Show cluster and workload status
@@ -177,8 +130,8 @@ status: ## Show cluster and workload status
 .PHONY: validate fmt
 
 validate: ## Validate all Terraform modules
-	$(call tf_validate,clusters)
-	$(call tf_validate,deployments)
+	cd $(CLUSTER_DIR) && terraform fmt -check && terraform validate
+	cd deployments && terraform fmt -check && terraform validate
 
 fmt: ## Format all Terraform files
 	terraform fmt -recursive clusters/
