@@ -90,6 +90,13 @@ logs: ## Tail logs from k6 runner pods
 	@$(KUBECTL) logs -n $(PROVIDER) -l runner=true -f --tail=50 2>/dev/null || \
 		echo "No runner pods found yet."
 
+summary: ## Extract the JSON summary block from the completed runner log
+	@pod=$$($(KUBECTL) get pods -n $(PROVIDER) --no-headers 2>/dev/null | awk '/test-1.*Completed/{print $$1; exit}'); \
+	if [ -z "$$pod" ]; then echo "No completed runner pod in namespace $(PROVIDER)"; exit 1; fi; \
+	$(KUBECTL) logs -n $(PROVIDER) "$$pod" 2>/dev/null | \
+		awk '/===== K6_SUMMARY_BEGIN =====/,/===== K6_SUMMARY_END =====/' | \
+		grep -v '^===== K6_SUMMARY_'
+
 clean: ## Delete k6 test resources for PROVIDER
 	@echo "==> Cleaning test resources for $(PROVIDER)..."
 	-@$(KUBECTL) delete testrun test -n $(PROVIDER) 2>/dev/null

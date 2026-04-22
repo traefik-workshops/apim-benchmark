@@ -94,3 +94,34 @@ export default function (keys) {
 
   http.get(url, { headers });
 }
+
+// ---------------------------------------------------------------------------
+// handleSummary — emits two outputs at end-of-test:
+//   1. The default text summary to stdout (unchanged, k6 renders pretty)
+//   2. A machine-readable JSON summary to stdout, bracketed with markers so
+//      the kubectl-log caller can `awk`/`jq` it out for archival
+//
+// Prometheus remote-write is still authoritative for time-series; this is
+// the complementary "one artefact per run, one provider" snapshot so you
+// don't have to snapshot Prom just to keep a number.
+// ---------------------------------------------------------------------------
+export function handleSummary(data) {
+  const picked = {
+    provider: __ENV.PROVIDER,
+    scenario: __ENV.SCENARIO,
+    rate: config.rate,
+    virtual_users: config.virtual_users,
+    duration_minutes: config.duration,
+    auth_type: __ENV.AUTH_TYPE,
+    use_tls: useTLS,
+    metrics: data.metrics,
+    root_group: data.root_group,
+    timestamp: new Date().toISOString(),
+  };
+  return {
+    "stdout":
+      "\n===== K6_SUMMARY_BEGIN =====\n" +
+      JSON.stringify(picked, null, 2) +
+      "\n===== K6_SUMMARY_END =====\n",
+  };
+}
