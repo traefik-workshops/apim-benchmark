@@ -99,6 +99,36 @@ module "keycloak" {
 }
 
 
+# ---------------------------------------------------------------------------
+# OpenTelemetry Collector
+#
+# Receives OTLP from the gateways (metrics, logs, traces) and forwards into
+# the grafana-stack pipelines:
+#   - traces  -> Tempo  (OTLP HTTP on 4318)
+#   - logs    -> Loki   (OTLP HTTP on 3100/otlp)
+#   - metrics -> Prometheus scrape target on :8889
+#
+# The chart names the Service "opentelemetry-collector" when the release
+# name contains the chart name, so the gateway modules' hardcoded URL
+# (http://opentelemetry-collector.dependencies.svc:4318) resolves without
+# extra aliasing.
+# ---------------------------------------------------------------------------
+module "opentelemetry-collector" {
+  source = "../../../../terraform-demo-modules/observability/opentelemetry/k8s"
+
+  name      = "opentelemetry-collector"
+  namespace = var.namespace
+
+  enable_loki    = true
+  loki_endpoint  = "http://loki.${var.namespace}.svc:3100/otlp"
+  enable_tempo   = true
+  tempo_endpoint = "http://tempo.${var.namespace}.svc:4318"
+
+  enable_prometheus = true
+
+  depends_on = [module.grafana-stack]
+}
+
 module "grafana-stack" {
   source = "../../../../terraform-demo-modules/observability/grafana-stack/k8s"
 
