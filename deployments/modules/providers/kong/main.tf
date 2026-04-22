@@ -38,7 +38,7 @@ resource "helm_release" "kong" {
   name       = "kong"
   repository = "https://charts.konghq.com"
   chart      = "ingress"
-  version    = "0.22.0"
+  version    = "0.24.0"
 
   namespace = var.namespace
   atomic    = true

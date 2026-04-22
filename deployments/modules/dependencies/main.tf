@@ -27,7 +27,7 @@ module "traefik" {
 
   namespace             = var.namespace
   serviceType           = var.service_type
-  traefik_chart_version = "39.0.2"
+  traefik_chart_version = "39.0.8"
   skip_crds             = true
   kubernetes_namespaces = [var.namespace]
   ingress_class_name    = "traefik-dependencies"
