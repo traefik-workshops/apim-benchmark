@@ -144,6 +144,45 @@ validate: ## Validate all Terraform modules
 	cd $(CLUSTER_DIR) && terraform fmt -check && terraform validate
 	cd deployments && terraform fmt -check && terraform validate
 
+validate-nodes: ## Assert every benchmark node pool has matching instance type/CPU/memory
+	@bash -c 'set -euo pipefail; \
+		echo "==> validate-nodes (context=$(KUBE_CONTEXT))"; \
+		ok=1; \
+		all_specs=""; \
+		print_pool() { \
+			local role="$$1"; \
+			kubectl --context=$(KUBE_CONTEXT) get nodes -l node=$$role \
+				-o jsonpath="{range .items[*]}{.metadata.labels.node\\.kubernetes\\.io/instance-type} {.status.capacity.cpu} {.status.capacity.memory}{\"\\n\"}{end}" 2>/dev/null; \
+		}; \
+		for p in traefik kong tyk gravitee envoygateway upstream; do \
+			roles="$$p $$p-upstream $$p-loadgen"; \
+			[ "$$p" = "upstream" ] && roles="$$p $$p-loadgen"; \
+			provider_specs=""; \
+			for r in $$roles; do \
+				spec=$$(print_pool $$r | head -1); \
+				[ -z "$$spec" ] && continue; \
+				provider_specs="$$provider_specs $$spec|"; \
+				all_specs="$$all_specs $$spec|"; \
+			done; \
+			uniq=$$(echo "$$provider_specs" | tr "|" "\\n" | awk "NF>0" | sort -u | wc -l | tr -d " "); \
+			if [ "$$uniq" -gt 1 ]; then \
+				echo "  [FAIL] $$p pools are not identical:"; \
+				echo "$$provider_specs" | tr "|" "\\n" | sed "s/^/      /"; \
+				ok=0; \
+			else \
+				echo "  [OK]   $$p pools uniform ($$uniq spec)"; \
+			fi; \
+		done; \
+		cross_uniq=$$(echo "$$all_specs" | tr "|" "\\n" | awk "NF>0" | sort -u | wc -l | tr -d " "); \
+		if [ "$$cross_uniq" -gt 1 ]; then \
+			echo "  [FAIL] cross-provider heterogeneity: $$cross_uniq distinct specs across the cluster"; \
+			echo "$$all_specs" | tr "|" "\\n" | awk "NF>0" | sort -u | sed "s/^/      /"; \
+			ok=0; \
+		else \
+			echo "  [OK]   all benchmark nodes share one spec"; \
+		fi; \
+		[ $$ok -eq 1 ] && echo "==> validate-nodes PASS" || (echo "==> validate-nodes FAIL"; exit 1)'
+
 fmt: ## Format all Terraform files
 	terraform fmt -recursive clusters/
 	terraform fmt -recursive deployments/
