@@ -1,4 +1,4 @@
-resource "kubernetes_config_map" "scenarios-configmap" {
+resource "kubernetes_config_map_v1" "scenarios-configmap" {
   metadata {
     name      = "scenarios-configmap"
     namespace = var.namespace

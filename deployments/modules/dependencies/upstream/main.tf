@@ -1,4 +1,4 @@
-resource "kubernetes_deployment" "fortio" {
+resource "kubernetes_deployment_v1" "fortio" {
   metadata {
     name      = "fortio-${count.index}"
     namespace = var.namespace

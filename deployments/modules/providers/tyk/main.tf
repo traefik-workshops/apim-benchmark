@@ -174,6 +174,6 @@ resource "helm_release" "tyk" {
   depends_on = [
     kubernetes_namespace_v1.tyk,
     module.redis,
-    kubernetes_config_map.tyk_api_definitions,
+    kubernetes_config_map_v1.tyk_api_definitions,
   ]
 }

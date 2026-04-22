@@ -91,7 +91,7 @@ locals {
 # ---------------------------------------------------------------------------
 # API definitions ConfigMap (loaded by gateway from /opt/tyk-gateway/apps/)
 # ---------------------------------------------------------------------------
-resource "kubernetes_config_map" "tyk_api_definitions" {
+resource "kubernetes_config_map_v1" "tyk_api_definitions" {
   metadata {
     name      = "tyk-api-definitions"
     namespace = var.namespace
@@ -114,7 +114,7 @@ resource "kubernetes_config_map" "tyk_api_definitions" {
 # Security policies (loaded by gateway from /mnt/tyk-gateway/policies/)
 # Required for JWT authentication — default policy grants API access.
 # ---------------------------------------------------------------------------
-resource "kubernetes_config_map" "tyk_policies" {
+resource "kubernetes_config_map_v1" "tyk_policies" {
   metadata {
     name      = "tyk-policies"
     namespace = var.namespace

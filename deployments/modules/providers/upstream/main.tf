@@ -20,7 +20,7 @@ module "scenarios" {
   depends_on = [module.upstream]
 }
 
-resource "kubernetes_config_map" "tests-configmap" {
+resource "kubernetes_config_map_v1" "tests-configmap" {
   metadata {
     name      = "tests-configmap"
     namespace = var.namespace
@@ -44,7 +44,7 @@ EOF
   depends_on = [module.upstream]
 }
 
-resource "kubernetes_config_map" "auth-configmap" {
+resource "kubernetes_config_map_v1" "auth-configmap" {
   metadata {
     name      = "auth-configmap"
     namespace = var.namespace

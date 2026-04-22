@@ -90,7 +90,7 @@ resource "helm_release" "envoygateway" {
 # gateway.envoyproxy.io/owning-gateway-name=envoy-gateway.
 # We create a fixed-name ClusterIP service so k6 tests can target it.
 # ---------------------------------------------------------------------------
-resource "kubernetes_service" "envoy_proxy" {
+resource "kubernetes_service_v1" "envoy_proxy" {
   metadata {
     name      = "envoy-gateway-proxy"
     namespace = var.namespace
