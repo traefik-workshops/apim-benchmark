@@ -105,7 +105,6 @@ dependencies_service_type = "LoadBalancer"
 
 dns_traefiker = {
   enabled     = true
-  chart       = "/Users/zaidalbirawi/dev/traefik-demo-resources/dns-traefiker/helm"
   ip_override = "127.0.0.1"
 }
 

@@ -104,8 +104,7 @@ domain                    = "benchmarks.demo.traefik.ai"
 dependencies_service_type = "LoadBalancer"
 
 dns_traefiker = {
-  enabled     = true
-  chart       = "/Users/zaidalbirawi/dev/traefik-demo-resources/dns-traefiker/helm"
+  enabled = true
 }
 
 # Traefik Hub token is read from environment (TF_VAR_traefik_hub_token) or

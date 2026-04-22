@@ -284,15 +284,13 @@ variable "dependencies_service_type" {
 variable "dns_traefiker" {
   type = object({
     enabled     = bool
-    chart       = string
     ip_override = optional(string, "")
   })
   default = {
     enabled     = false
-    chart       = ""
     ip_override = ""
   }
-  description = "DNS Traefiker configuration for automatic Cloudflare DNS registration."
+  description = "DNS Traefiker configuration for automatic Cloudflare DNS registration. Chart path is controlled by var.dns_traefiker_chart."
 }
 
 
@@ -301,4 +299,26 @@ variable "traefik_hub_token" {
   default     = ""
   sensitive   = true
   description = "Traefik Hub license token for API Gateway features."
+}
+
+# ---------------------------------------------------------------------------
+# Local Helm chart paths
+#
+# The Keycloak and DNS Traefiker charts live in the sibling
+# `traefik-demo-resources/` checkout. The default paths assume the expected
+# `<parent>/{apim-benchmark,traefik-demo-resources}/` layout, but anyone can
+# override via `TF_VAR_<name>` or a machine-local secrets.auto.tfvars to
+# point at a chart in a different location.
+# ---------------------------------------------------------------------------
+
+variable "keycloak_chart" {
+  type        = string
+  default     = ""
+  description = "Filesystem path to the Keycloak Helm chart. Empty → use ../../traefik-demo-resources/keycloak/helm relative to the deployments/ module."
+}
+
+variable "dns_traefiker_chart" {
+  type        = string
+  default     = ""
+  description = "Filesystem path to the DNS Traefiker Helm chart. Empty → use ../../traefik-demo-resources/dns-traefiker/helm relative to the deployments/ module."
 }
