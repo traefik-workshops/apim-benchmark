@@ -7,7 +7,6 @@ spec:
   parallelism: ${PARALLELISM}
   separate: false
   quiet: "false"
-  cleanup: "post"
   arguments: --out experimental-prometheus-rw --tag testid=${PROVIDER} --env SCENARIO=${EXECUTOR}
   initializer:
     metadata:
