@@ -10,8 +10,12 @@ resource "helm_release" "gravitee-operator" {
     yamlencode({
       manager = {
         resources = null
-        nodeSelector = {
-          node = var.taint
+        # The GKO chart puts nodeSelector on manager.pod, not manager.
+        # Tolerations are on manager directly.
+        pod = {
+          nodeSelector = {
+            node = var.taint
+          }
         }
         tolerations = [{
           key      = "node"
