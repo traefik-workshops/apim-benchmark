@@ -36,6 +36,9 @@ ALL_PROVIDERS    := traefik kong tyk gravitee envoygateway upstream
 KUBECONFIG       ?= $(HOME)/.kube/config
 KUBE_CONTEXT     ?= k3d-benchmark
 
+# k6 test config: "k3d" (local) or "cloud" (production-grade RPS+duration)
+TEST_CONFIG      ?= $(if $(filter k3d,$(CLUSTER_PROVIDER)),k3d,cloud)
+
 # ---------------------------------------------------------------------------
 # Cluster targets
 # ---------------------------------------------------------------------------
@@ -87,14 +90,22 @@ test-envoygateway: ## Run k6 load test against Envoy Gateway
 test-upstream: ## Run k6 load test against upstream (baseline)
 	$(MAKE) -C tests run PROVIDER=upstream
 
-test-all: ## Run k6 load tests against all enabled providers sequentially
-	@for p in $(ALL_PROVIDERS); do \
-		echo "=== Testing $$p ==="; \
-		$(MAKE) -C tests run PROVIDER=$$p || true; \
-		$(MAKE) -C tests wait PROVIDER=$$p || true; \
-		$(MAKE) -C tests clean PROVIDER=$$p || true; \
-		echo ""; \
-	done
+# 30s settle between providers so Prometheus remote-write can drain the
+# previous run's samples before the next test fires — prevents metric-ingest
+# overlap and gives the cluster scheduler a breath between heavy startups.
+TEST_ALL_SETTLE_SECONDS ?= 30
+
+test-all: ## Run k6 load tests against every provider (settle pause between runs)
+	@set -e; \
+	for p in $(ALL_PROVIDERS); do \
+		echo ""; echo "=== Testing $$p ==="; \
+		$(MAKE) -C tests run PROVIDER=$$p CONFIG=$(TEST_CONFIG) KUBE_CONTEXT=$(KUBE_CONTEXT); \
+		echo "--- waiting for $$p TestRun to finish ---"; \
+		until [ "$$(kubectl --context=$(KUBE_CONTEXT) get testrun test -n $$p -o jsonpath='{.status.stage}' 2>/dev/null)" = "finished" ]; do sleep 5; done; \
+		echo "--- $$p finished; settling for $(TEST_ALL_SETTLE_SECONDS)s ---"; \
+		sleep $(TEST_ALL_SETTLE_SECONDS); \
+	done; \
+	echo ""; echo "=== All providers done ==="
 
 test-clean: ## Clean up all test resources
 	$(MAKE) -C tests clean-all
