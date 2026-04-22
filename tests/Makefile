@@ -97,6 +97,54 @@ summary: ## Extract the JSON summary block from the completed runner log
 		awk '/===== K6_SUMMARY_BEGIN =====/,/===== K6_SUMMARY_END =====/' | \
 		grep -v '^===== K6_SUMMARY_'
 
+validate-test: ## PROVIDER=<x> — 30s probe + assert pod placement + assert metrics
+	@bash -c 'set -euo pipefail; \
+		P="$(PROVIDER)"; CTX="$(KUBE_CONTEXT)"; \
+		echo "==> Validate-test for PROVIDER=$$P"; \
+		$(MAKE) clean PROVIDER=$$P >/dev/null 2>&1 || true; \
+		DURATION=1 RATE=50 KEY_COUNT=10 AUTH_TYPE=disabled \
+			$(MAKE) run PROVIDER=$$P CONFIG=$(CONFIG) >/dev/null; \
+		echo "==> Waiting for test to complete (~90s)..."; \
+		for i in $$(seq 1 40); do \
+			stage=$$(kubectl --context=$$CTX get testrun test -n $$P -o jsonpath="{.status.stage}" 2>/dev/null || echo ""); \
+			[ "$$stage" = "finished" ] && break; \
+			sleep 5; \
+		done; \
+		if [ "$$stage" != "finished" ]; then echo "FAIL: test did not finish (stage=$$stage)"; exit 1; fi; \
+		echo "==> Asserting pod placements..."; \
+		ok=1; \
+		if [ "$$P" != "upstream" ]; then \
+			gw=$$(kubectl --context=$$CTX get pods -n $$P -o jsonpath="{range .items[?(@.metadata.labels.app\\.kubernetes\\.io/name==\"$$P\")]}{.spec.nodeName}{\"\\n\"}{end}" 2>/dev/null | head -1); \
+			expected=$$(kubectl --context=$$CTX get nodes -l node=$$P -o name 2>/dev/null | sed "s#node/##" | head -1); \
+			if [ -z "$$gw" ] || [ "$$gw" != "$$expected" ]; then \
+				echo "  [WARN] gateway pod on $${gw:-?}, expected $${expected:-?} (node=$$P)"; \
+			else \
+				echo "  [OK]   gateway on $$gw"; \
+			fi; \
+		fi; \
+		runner_node=$$(kubectl --context=$$CTX get pods -n $$P -l runner=true -o jsonpath="{.items[0].spec.nodeName}" 2>/dev/null); \
+		expected_loadgen=$$(kubectl --context=$$CTX get nodes -l node=$$P-loadgen -o name 2>/dev/null | sed "s#node/##" | head -1); \
+		if [ -z "$$runner_node" ] || [ "$$runner_node" != "$$expected_loadgen" ]; then \
+			echo "  [FAIL] runner on $${runner_node:-?}, expected $${expected_loadgen:-?} (node=$$P-loadgen)"; ok=0; \
+		else \
+			echo "  [OK]   runner on $$runner_node"; \
+		fi; \
+		echo "==> Asserting metrics in Prometheus..."; \
+		kubectl --context=$$CTX -n dependencies port-forward svc/prometheus-kube-prometheus-prometheus 19090:9090 >/dev/null 2>&1 & \
+		PF=$$!; sleep 3; \
+		reqs=$$(curl -s "http://localhost:19090/api/v1/query?query=max(max_over_time(k6_http_reqs_total%7Btestid%3D%22$$P%22%7D%5B5m%5D))" | python3 -c "import json,sys;r=json.load(sys.stdin)[\"data\"][\"result\"];print(r[0][\"value\"][1] if r else \"0\")"); \
+		fail=$$(curl -s "http://localhost:19090/api/v1/query?query=max(max_over_time(k6_http_req_failed_rate%7Btestid%3D%22$$P%22%7D%5B5m%5D))" | python3 -c "import json,sys;r=json.load(sys.stdin)[\"data\"][\"result\"];print(r[0][\"value\"][1] if r else \"0\")"); \
+		kill $$PF 2>/dev/null || true; \
+		if [ "$$(printf %.0f $$reqs)" -lt "100" ]; then \
+			echo "  [FAIL] k6_http_reqs_total{testid=$$P} = $$reqs (expected >= 100)"; ok=0; \
+		else \
+			echo "  [OK]   reqs=$$reqs fail_rate=$$fail"; \
+		fi; \
+		if [ "$$(printf %.0f $$(echo "$$fail * 100" | bc -l))" -gt "0" ]; then \
+			echo "  [FAIL] k6_http_req_failed_rate{testid=$$P} = $$fail"; ok=0; \
+		fi; \
+		[ $$ok -eq 1 ] && echo "==> validate-test PASS" || (echo "==> validate-test FAIL"; exit 1)'
+
 clean: ## Delete k6 test resources for PROVIDER
 	@echo "==> Cleaning test resources for $(PROVIDER)..."
 	-@$(KUBECTL) delete testrun test -n $(PROVIDER) 2>/dev/null
