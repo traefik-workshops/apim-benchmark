@@ -19,7 +19,7 @@ upstream = {
 apim_providers = {
   traefik = {
     enabled = true
-    version = "v3.6.8"
+    version = "v3.6.13"
   }
   kong = {
     enabled = true
@@ -27,15 +27,15 @@ apim_providers = {
   }
   tyk = {
     enabled = true
-    version = "v5.8.11"
+    version = "v5.11.0"
   }
   gravitee = {
     enabled = true
-    version = "4.10"
+    version = "4.11.4"
   }
   envoygateway = {
     enabled = true
-    version = "v1.7.0"
+    version = "v1.7.2"
   }
 }
 
