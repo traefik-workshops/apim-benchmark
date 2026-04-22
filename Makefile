@@ -99,6 +99,7 @@ test-all: ## Run k6 load tests against every provider (settle pause between runs
 	@set -e; \
 	for p in $(ALL_PROVIDERS); do \
 		echo ""; echo "=== Testing $$p ==="; \
+		$(MAKE) -C tests clean PROVIDER=$$p KUBE_CONTEXT=$(KUBE_CONTEXT) >/dev/null 2>&1 || true; \
 		$(MAKE) -C tests run PROVIDER=$$p CONFIG=$(TEST_CONFIG) KUBE_CONTEXT=$(KUBE_CONTEXT); \
 		echo "--- waiting for $$p TestRun to finish ---"; \
 		until [ "$$(kubectl --context=$(KUBE_CONTEXT) get testrun test -n $$p -o jsonpath='{.status.stage}' 2>/dev/null)" = "finished" ]; do sleep 5; done; \
