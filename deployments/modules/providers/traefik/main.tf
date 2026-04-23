@@ -29,10 +29,21 @@ locals {
     value    = var.taint
     effect   = "NoSchedule"
   }]
+
+  # Pull in the Hub image only when a Hub-exclusive feature is enabled (API
+  # auth, token/apikey auth, rate-limit, quota). Everything else —
+  # baseline, headers, TLS, observability — is available in OSS, so we
+  # use the smaller/lighter OSS image there.
+  #
+  # The middlewares.tf file already computes local.needs_hub_api (see
+  # middlewares.tf:17) using the same condition; reusing it here keeps
+  # the two decisions (which image to pull, which Hub CRDs to install)
+  # in lock-step.
+  use_hub_image = local.needs_hub_api && var.traefik_hub_token != ""
 }
 
 resource "kubernetes_secret_v1" "traefik_hub_license" {
-  count = var.traefik_hub_token != "" ? 1 : 0
+  count = local.use_hub_image ? 1 : 0
 
   metadata {
     name      = "traefik-hub-license"
@@ -60,7 +71,7 @@ resource "helm_release" "traefik" {
 
   values = [
     yamlencode(merge({
-      image = var.traefik_hub_token != "" ? {
+      image = local.use_hub_image ? {
         registry   = "ghcr.io"
         repository = "traefik/traefik-hub"
         tag        = "v3.19.4"
@@ -198,7 +209,7 @@ resource "helm_release" "traefik" {
       nodeSelector = {
         node = var.taint
       }
-      }, var.traefik_hub_token != "" ? {
+      }, local.use_hub_image ? {
       hub = {
         token   = "traefik-hub-license"
         offline = true
