@@ -112,6 +112,8 @@ spec:
       value: "${FORTIO_OPTIONS}"
     - name: DURATION
       value: "${DURATION}"
+    - name: DURATION_UNIT
+      value: "${DURATION_UNIT}"
     - name: RATE
       value: "${RATE}"
     - name: VIRTUAL_USERS

@@ -27,6 +27,7 @@ const protocol      = useTLS ? "https" : "http";
 const config = {
   ramping_steps: parseInt(__ENV.RAMPING_STEPS || "10", 10),
   duration:      parseInt(__ENV.DURATION      || "2",  10),
+  duration_unit: __ENV.DURATION_UNIT          || "m",
   rate:          parseInt(__ENV.RATE           || "500", 10),
   virtual_users: parseInt(__ENV.VIRTUAL_USERS  || "10", 10),
   fortio_options: fortioOptions,

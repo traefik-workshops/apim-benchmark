@@ -103,9 +103,9 @@ validate-test: ## PROVIDER=<x> — 30s probe + assert pod placement + assert met
 		echo "==> Validate-test for PROVIDER=$$P"; \
 		$(MAKE) clean PROVIDER=$$P >/dev/null 2>&1 || true; \
 		$(MAKE) run PROVIDER=$$P CONFIG=$(CONFIG) \
-			DURATION=1 RATE=50 KEY_COUNT=10 AUTH_TYPE=disabled >/dev/null; \
-		echo "==> Waiting for test to complete (~90s)..."; \
-		for i in $$(seq 1 40); do \
+			DURATION=30 DURATION_UNIT=s RATE=50 KEY_COUNT=10 AUTH_TYPE=disabled >/dev/null; \
+		echo "==> Waiting for test to complete (~60s)..."; \
+		for i in $$(seq 1 24); do \
 			stage=$$(kubectl --context=$$CTX get testrun test -n $$P -o jsonpath="{.status.stage}" 2>/dev/null || echo ""); \
 			[ "$$stage" = "finished" ] && break; \
 			sleep 5; \
