@@ -46,15 +46,21 @@ resource "helm_release" "envoygateway" {
   timeout          = 300
   create_namespace = false
 
-  values = [
-    yamlencode({
+  # NOTE: the two-entry values list is intentional. Helm deep-merges maps,
+  # so passing `resources: {}` (which is all yamlencode can produce for an
+  # "empty" map — it drops null attrs) is a no-op against the chart's default
+  # {limits: 1024Mi, requests: 100m/256Mi}. To actually strip the defaults we
+  # have to emit `limits: null` / `requests: null` as raw YAML; yamlencode
+  # can't express that. The second values entry is a heredoc that does.
+  values = concat(
+    [yamlencode({
       deployment = {
-        envoyGateway = {
-          resources = var.deployment.resources.requests.cpu != "0" ? {
+        envoyGateway = var.deployment.resources != null ? {
+          resources = {
             requests = var.deployment.resources.requests
             limits   = var.deployment.resources.limits
-          } : null
-        }
+          }
+        } : {}
         pod = {
           nodeSelector = {
             node = var.taint
@@ -78,8 +84,16 @@ resource "helm_release" "envoygateway" {
           }
         }
       }
-    })
-  ]
+    })],
+    var.deployment.resources == null ? [<<-YAML
+      deployment:
+        envoyGateway:
+          resources:
+            limits: null
+            requests: null
+    YAML
+    ] : []
+  )
 
   depends_on = [kubernetes_namespace_v1.envoygateway]
 }

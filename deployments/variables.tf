@@ -94,7 +94,11 @@ variable "apim_providers_deployment" {
   type = object({
     type          = string
     replica_count = number
-    resources = object({
+    # null (the default) means "no resources configured" — providers skip
+    # emitting the resources block, or emit explicit-null overrides when
+    # the Helm chart's own defaults would otherwise apply (envoygateway).
+    # Set this to populate requests/limits on the gateway pod.
+    resources = optional(object({
       requests = object({
         cpu    = string
         memory = string
@@ -103,22 +107,12 @@ variable "apim_providers_deployment" {
         cpu    = string
         memory = string
       })
-    })
+    }))
   })
 
   default = {
     type          = "Deployment"
     replica_count = 1
-    resources = {
-      requests = {
-        cpu    = "0"
-        memory = "0"
-      }
-      limits = {
-        cpu    = "0"
-        memory = "0"
-      }
-    }
   }
 
   description = "Deployment description for providers."

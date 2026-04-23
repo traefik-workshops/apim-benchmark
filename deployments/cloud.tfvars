@@ -43,16 +43,6 @@ apim_providers = {
 apim_providers_deployment = {
   type          = "Deployment"
   replica_count = 1
-  resources = {
-    requests = {
-      cpu    = "0"
-      memory = "0"
-    }
-    limits = {
-      cpu    = "0"
-      memory = "0"
-    }
-  }
 }
 
 apim_providers_service = {

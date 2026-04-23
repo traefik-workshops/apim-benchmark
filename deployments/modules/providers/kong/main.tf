@@ -113,7 +113,7 @@ resource "helm_release" "kong" {
           type = var.service.type
         }
 
-        resources = var.deployment.resources.requests.cpu != "0" ? {
+        resources = var.deployment.resources != null ? {
           requests = var.deployment.resources.requests
           limits   = var.deployment.resources.limits
         } : {}

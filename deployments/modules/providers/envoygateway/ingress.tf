@@ -36,7 +36,17 @@ spec:
     kubernetes:
       envoyDeployment:
         container:
-          resources: null
+%{if var.deployment.resources != null~}
+          resources:
+            requests:
+              cpu: ${var.deployment.resources.requests.cpu}
+              memory: ${var.deployment.resources.requests.memory}
+            limits:
+              cpu: ${var.deployment.resources.limits.cpu}
+              memory: ${var.deployment.resources.limits.memory}
+%{else~}
+          resources: {}
+%{endif~}
         pod:
           nodeSelector:
             node: ${var.taint}

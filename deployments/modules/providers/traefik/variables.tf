@@ -27,7 +27,10 @@ variable "deployment" {
   type = object({
     type          = string
     replica_count = number
-    resources = object({
+    # null means "no resources configured" — provider should not emit a
+    # resources block, or should emit explicit-null overrides to strip
+    # chart defaults (see envoygateway). Populate to set requests/limits.
+    resources = optional(object({
       requests = object({
         cpu    = string
         memory = string
@@ -36,7 +39,7 @@ variable "deployment" {
         cpu    = string
         memory = string
       })
-    })
+    }))
   })
 }
 

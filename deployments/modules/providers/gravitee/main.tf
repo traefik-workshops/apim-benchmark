@@ -68,7 +68,7 @@ resource "helm_release" "gravitee" {
           type                  = var.service.type
           externalTrafficPolicy = var.service.external_traffic_policy
         }
-        resources = var.deployment.resources.requests.cpu != "0" ? {
+        resources = var.deployment.resources != null ? {
           requests = var.deployment.resources.requests
           limits   = var.deployment.resources.limits
         } : null

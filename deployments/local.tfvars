@@ -40,19 +40,13 @@ apim_providers = {
 }
 
 # --- Deployment settings (shared across providers) -------------------------
+# Omit `resources` entirely → the providers will not set CPU/memory requests
+# or limits on the gateway pod (stripping Helm-chart defaults where needed).
+# To pin resources, add a `resources = { requests = {...}, limits = {...} }`
+# block here.
 apim_providers_deployment = {
   type          = "Deployment"
   replica_count = 1
-  resources = {
-    requests = {
-      cpu    = "0"
-      memory = "0"
-    }
-    limits = {
-      cpu    = "0"
-      memory = "0"
-    }
-  }
 }
 
 apim_providers_service = {
