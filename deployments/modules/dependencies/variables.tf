@@ -40,7 +40,8 @@ variable "dns_traefiker" {
 
 variable "keycloak" {
   type = object({
-    enabled = bool
-    chart   = string
+    enabled   = bool
+    chart     = string
+    instances = optional(number, 1)
   })
 }

@@ -5,6 +5,15 @@
 locals {
   keycloak_chart_path      = var.keycloak_chart != "" ? var.keycloak_chart : "${path.root}/../../traefik-demo-resources/keycloak/helm"
   dns_traefiker_chart_path = var.dns_traefiker_chart != "" ? var.dns_traefiker_chart : "${path.root}/../../traefik-demo-resources/dns-traefiker/helm"
+
+  # Auto-scale Keycloak replica count by enabled provider count. Keycloak
+  # becomes a bottleneck during the k6 setup() phase when several
+  # parallel TestRuns all mint OIDC tokens at once (jwt_keycloak auth).
+  # Formula: one replica per enabled provider, minimum 2 for HA.
+  enabled_provider_count = length([
+    for name, cfg in var.apim_providers : name if cfg.enabled
+  ]) + (var.upstream.enabled ? 1 : 0)
+  keycloak_instances = max(local.enabled_provider_count, 2)
 }
 
 # ---------------------------------------------------------------------------
@@ -25,8 +34,9 @@ module "dependencies" {
   }
 
   keycloak = {
-    enabled = true
-    chart   = local.keycloak_chart_path
+    enabled   = true
+    chart     = local.keycloak_chart_path
+    instances = local.keycloak_instances
   }
 }
 

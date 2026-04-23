@@ -87,6 +87,7 @@ module "keycloak" {
   name      = "keycloak"
   namespace = var.namespace
   chart     = var.keycloak.chart
+  instances = var.keycloak.instances
   users     = [for i in range(10) : "user${i}@test.com"]
 
   domain = var.domain
