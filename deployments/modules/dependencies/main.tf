@@ -157,10 +157,6 @@ resource "helm_release" "victoria_metrics" {
 
       vmstorage = {
         replicaCount = var.vm_replicas
-        extraArgs = {
-          # Same reason as vminsert — vmstorage enforces the same limit.
-          "maxLabelsPerTimeseries" = "64"
-        }
         tolerations  = local.tolerations
         nodeSelector = { node = var.taint }
         persistentVolume = {
