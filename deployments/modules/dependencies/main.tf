@@ -247,30 +247,13 @@ module "grafana-stack" {
         effect   = "NoSchedule"
       }]
     }
-    # Swap Grafana's default "Prometheus" datasource URL to point at
-    # vmselect while keeping the familiar UID (PBFA97CFB590B2093) — so
-    # every hardcoded dashboard query (including the shipped 14 k-line
-    # k6-test-results.json) resolves against VictoriaMetrics' Prom-
-    # compatible query API without any dashboard rewrites.
-    grafana = {
-      sidecar = {
-        datasources = {
-          defaultDatasourceEnabled = false
-        }
-      }
-      additionalDataSources = [{
-        name      = "Prometheus"
-        type      = "prometheus"
-        uid       = "PBFA97CFB590B2093"
-        access    = "proxy"
-        url       = "http://vm-vmselect.${var.namespace}.svc:8481/select/0/prometheus"
-        isDefault = true
-        jsonData = {
-          timeInterval = "15s"
-        }
-      }]
-    }
   }
+
+  # Point Grafana's Prometheus datasource at VictoriaMetrics vmselect (Prom-
+  # compatible query API) so the shipped k6-test-results dashboard (which
+  # hardcodes datasource UID PBFA97CFB590B2093) queries VM without any
+  # dashboard rewrites.
+  prometheus_url_override = "http://vm-vmselect.${var.namespace}.svc:8481/select/0/prometheus"
 
   depends_on = [kubernetes_namespace_v1.dependencies, helm_release.victoria_metrics]
 }
