@@ -94,7 +94,10 @@ spec:
       effect: NoSchedule
     env:
     - name: K6_PROMETHEUS_RW_SERVER_URL
-      value: http://prometheus-kube-prometheus-prometheus.dependencies.svc:9090/api/v1/write
+      # VictoriaMetrics cluster (vminsert) — Prom-compatible remote-write
+      # endpoint that shards across vmstorage replicas for horizontal
+      # ingest. Path `/insert/0/...` is VM's accountID=0 prefix.
+      value: http://vm-vminsert.dependencies.svc:8480/insert/0/prometheus/api/v1/write
     - name: K6_PROMETHEUS_RW_TREND_STATS
       value: p(75),p(90),p(95),p(99)
     - name: PROVIDER

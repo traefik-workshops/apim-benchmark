@@ -26,6 +26,7 @@ module "dependencies" {
   domain                = var.domain
   service_type          = var.dependencies_service_type
   traefik_chart_version = local.chart_versions.dep_traefik
+  vm_replicas           = local.keycloak_instances # same shape: one per provider, min 2
 
   dns_traefiker = {
     enabled     = var.dns_traefiker.enabled

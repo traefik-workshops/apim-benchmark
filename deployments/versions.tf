@@ -14,11 +14,11 @@
 # ---------------------------------------------------------------------------
 locals {
   chart_versions = {
-    dep_traefik  = "39.0.8" # dependencies-namespace Traefik ingress
-    traefik      = "39.0.8" # provider-under-test Traefik chart (Hub or OSS)
-    kong         = "0.24.0" # kong/ingress Helm chart (Kong Gateway 3.9)
-    tyk          = "5.1.1"  # tyk-oss chart
-    gravitee     = "4.11.4" # gravitee/apim chart — also the app version
+    dep_traefik = "39.0.8" # dependencies-namespace Traefik ingress
+    traefik     = "39.0.8" # provider-under-test Traefik chart (Hub or OSS)
+    kong        = "0.24.0" # kong/ingress Helm chart (Kong Gateway 3.9)
+    tyk         = "5.1.1"  # tyk-oss chart
+    gravitee    = "4.11.4" # gravitee/apim chart — also the app version
     # envoygateway chart version = image tag; supplied via
     # apim_providers.envoygateway.version in tfvars.
   }

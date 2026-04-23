@@ -101,6 +101,67 @@ module "keycloak" {
 
 
 # ---------------------------------------------------------------------------
+# VictoriaMetrics Cluster
+#
+# Replaces kube-prometheus-stack Prometheus as the authoritative remote-
+# write receiver + query backend. VM scales horizontally (vminsert shards
+# writes across vmstorage nodes, vmselect fans out queries), so aggregate
+# ingest throughput grows with replica count instead of being pinned to
+# whatever a single Prometheus pod can absorb.
+#
+# All three tiers are scaled by enabled provider count — one replica per
+# provider, minimum 2 — which matches the parallel test-run shape.
+#
+# Services exposed (fullnameOverride = "vm" so names stay short):
+#   - vm-vminsert  :8480   receive remote-write (k6 runners + kube-prom)
+#   - vm-vmselect  :8481   Prom-compatible query API (Grafana datasource)
+#   - vm-vmstorage :8482/8400/8401  internal
+# ---------------------------------------------------------------------------
+resource "helm_release" "victoria_metrics" {
+  name       = "vm"
+  repository = "https://victoriametrics.github.io/helm-charts/"
+  chart      = "victoria-metrics-cluster"
+  version    = "0.39.0"
+  namespace  = var.namespace
+  timeout    = 600
+  atomic     = true
+
+  values = [
+    yamlencode({
+      fullnameOverride = "vm"
+
+      vminsert = {
+        replicaCount = var.vm_replicas
+        extraArgs = {
+          # Accept Prom remote-write on the default Prom path so existing
+          # k6 runners and kube-prometheus-stack point here unchanged.
+          "httpListenAddr" = ":8480"
+        }
+        tolerations  = local.tolerations
+        nodeSelector = { node = var.taint }
+      }
+
+      vmselect = {
+        replicaCount = var.vm_replicas
+        tolerations  = local.tolerations
+        nodeSelector = { node = var.taint }
+      }
+
+      vmstorage = {
+        replicaCount = var.vm_replicas
+        tolerations  = local.tolerations
+        nodeSelector = { node = var.taint }
+        persistentVolume = {
+          enabled = false
+        }
+      }
+    })
+  ]
+
+  depends_on = [kubernetes_namespace_v1.dependencies]
+}
+
+# ---------------------------------------------------------------------------
 # OpenTelemetry Collector
 #
 # Receives OTLP from the gateways (metrics, logs, traces) and forwards into
@@ -151,13 +212,24 @@ module "grafana-stack" {
   ingress_domain     = var.domain
   ingress_entrypoint = "websecure"
 
-  # Prometheus / kube-prometheus-stack overrides
+  # Prometheus / kube-prometheus-stack overrides.
+  #
+  # VictoriaMetrics is the authoritative query backend, but kube-prometheus-
+  # stack still runs so its ServiceMonitor scraping (node_exporter,
+  # kube-state-metrics, etc.) keeps working. Prometheus now remote-writes
+  # every scrape sample into VM-vminsert, so Grafana can query both
+  # scrape data and k6 remote-write data from the same backend.
   prometheus_extra_values = {
     prometheus = {
       prometheusSpec = {
-        enableRemoteWriteReceiver = true
+        # Prom itself no longer receives remote-write from k6 (k6 points at
+        # vminsert directly); drop the receiver flag.
+        enableRemoteWriteReceiver = false
         tolerations               = local.tolerations
         nodeSelector              = { node = var.taint }
+        remoteWrite = [{
+          url = "http://vm-vminsert.${var.namespace}.svc:8480/insert/0/prometheus/api/v1/write"
+        }]
       }
     }
     kube-state-metrics = {
@@ -172,7 +244,30 @@ module "grafana-stack" {
         effect   = "NoSchedule"
       }]
     }
+    # Swap Grafana's default "Prometheus" datasource URL to point at
+    # vmselect while keeping the familiar UID (PBFA97CFB590B2093) — so
+    # every hardcoded dashboard query (including the shipped 14 k-line
+    # k6-test-results.json) resolves against VictoriaMetrics' Prom-
+    # compatible query API without any dashboard rewrites.
+    grafana = {
+      sidecar = {
+        datasources = {
+          defaultDatasourceEnabled = false
+        }
+      }
+      additionalDataSources = [{
+        name      = "Prometheus"
+        type      = "prometheus"
+        uid       = "PBFA97CFB590B2093"
+        access    = "proxy"
+        url       = "http://vm-vmselect.${var.namespace}.svc:8481/select/0/prometheus"
+        isDefault = true
+        jsonData = {
+          timeInterval = "15s"
+        }
+      }]
+    }
   }
 
-  depends_on = [kubernetes_namespace_v1.dependencies]
+  depends_on = [kubernetes_namespace_v1.dependencies, helm_release.victoria_metrics]
 }

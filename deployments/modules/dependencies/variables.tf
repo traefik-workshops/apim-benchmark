@@ -24,6 +24,12 @@ variable "traefik_chart_version" {
   description = "Helm chart version for the dependencies-namespace Traefik ingress."
 }
 
+variable "vm_replicas" {
+  type        = number
+  default     = 2
+  description = "Replicas for each VictoriaMetrics cluster tier (vminsert, vmselect, vmstorage). Scale with parallel-test provider count."
+}
+
 variable "dns_traefiker" {
   type = object({
     enabled     = bool
