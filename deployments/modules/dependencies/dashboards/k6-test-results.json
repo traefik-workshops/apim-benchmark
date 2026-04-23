@@ -3632,6 +3632,10 @@
                   "fixedColor": "#00d9ba",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Tyk"
               }
             ]
           },
@@ -3647,6 +3651,10 @@
                   "fixedColor": "#1155cb",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Kong"
               }
             ]
           },
@@ -3662,6 +3670,10 @@
                   "fixedColor": "#f09135",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Gravitee"
               }
             ]
           },
@@ -3696,21 +3708,10 @@
                   "fixedColor": "#24a1c1",
                   "mode": "fixed"
                 }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*traefik.*/"
-            },
-            "properties": [
+              },
               {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#24a1c1",
-                  "mode": "fixed"
-                }
+                "id": "displayName",
+                "value": "Traefik"
               }
             ]
           },
@@ -3726,6 +3727,10 @@
                   "fixedColor": "#b140f5",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Upstream"
               }
             ]
           },
@@ -3922,6 +3927,10 @@
                   "fixedColor": "#00d9ba",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Tyk"
               }
             ]
           },
@@ -3937,6 +3946,10 @@
                   "fixedColor": "#1155cb",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Kong"
               }
             ]
           },
@@ -3952,6 +3965,10 @@
                   "fixedColor": "#f09135",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Gravitee"
               }
             ]
           },
@@ -3986,21 +4003,10 @@
                   "fixedColor": "#24a1c1",
                   "mode": "fixed"
                 }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*traefik.*/"
-            },
-            "properties": [
+              },
               {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#24a1c1",
-                  "mode": "fixed"
-                }
+                "id": "displayName",
+                "value": "Traefik"
               }
             ]
           },
@@ -4016,6 +4022,10 @@
                   "fixedColor": "#b140f5",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Upstream"
               }
             ]
           },
@@ -6529,6 +6539,10 @@
                   "fixedColor": "#00d9ba",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Tyk"
               }
             ]
           },
@@ -6544,6 +6558,10 @@
                   "fixedColor": "#1155cb",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Kong"
               }
             ]
           },
@@ -6559,6 +6577,10 @@
                   "fixedColor": "#f09135",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Gravitee"
               }
             ]
           },
@@ -6593,21 +6615,10 @@
                   "fixedColor": "#24a1c1",
                   "mode": "fixed"
                 }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*traefik.*/"
-            },
-            "properties": [
+              },
               {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#24a1c1",
-                  "mode": "fixed"
-                }
+                "id": "displayName",
+                "value": "Traefik"
               }
             ]
           },
@@ -6623,6 +6634,10 @@
                   "fixedColor": "#b140f5",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Upstream"
               }
             ]
           },
@@ -6638,6 +6653,10 @@
                   "fixedColor": "#953984",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Envoy Gateway"
               }
             ]
           }
@@ -6974,6 +6993,10 @@
                   "fixedColor": "#00d9ba",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Tyk"
               }
             ]
           },
@@ -6989,6 +7012,10 @@
                   "fixedColor": "#1155cb",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Kong"
               }
             ]
           },
@@ -7004,6 +7031,10 @@
                   "fixedColor": "#f09135",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Gravitee"
               }
             ]
           },
@@ -7038,21 +7069,10 @@
                   "fixedColor": "#24a1c1",
                   "mode": "fixed"
                 }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*traefik.*/"
-            },
-            "properties": [
+              },
               {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#24a1c1",
-                  "mode": "fixed"
-                }
+                "id": "displayName",
+                "value": "Traefik"
               }
             ]
           },
@@ -7068,6 +7088,10 @@
                   "fixedColor": "#b140f5",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Upstream"
               }
             ]
           },
@@ -7083,6 +7107,10 @@
                   "fixedColor": "#b140f5",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Dependencies"
               }
             ]
           },
@@ -7098,6 +7126,10 @@
                   "fixedColor": "#953984",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Envoy Gateway"
               }
             ]
           }
@@ -7218,6 +7250,10 @@
                   "fixedColor": "#00d9ba",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Tyk"
               }
             ]
           },
@@ -7233,6 +7269,10 @@
                   "fixedColor": "#1155cb",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Kong"
               }
             ]
           },
@@ -7248,6 +7288,10 @@
                   "fixedColor": "#f09135",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Gravitee"
               }
             ]
           },
@@ -7282,21 +7326,10 @@
                   "fixedColor": "#24a1c1",
                   "mode": "fixed"
                 }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*traefik.*/"
-            },
-            "properties": [
+              },
               {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#24a1c1",
-                  "mode": "fixed"
-                }
+                "id": "displayName",
+                "value": "Traefik"
               }
             ]
           },
@@ -7312,6 +7345,10 @@
                   "fixedColor": "#b140f5",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Upstream"
               }
             ]
           },
@@ -7327,6 +7364,10 @@
                   "fixedColor": "#b140f5",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Dependencies"
               }
             ]
           },
@@ -7342,6 +7383,10 @@
                   "fixedColor": "#953984",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "displayName",
+                "value": "Envoy Gateway"
               }
             ]
           }
@@ -8093,10 +8138,6 @@
                   "fixedColor": "#f09135",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Gravitee"
               }
             ]
           },
@@ -8127,10 +8168,6 @@
                   "fixedColor": "#953984",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Envoy Gateway"
               }
             ]
           }
@@ -8346,10 +8383,6 @@
                   "fixedColor": "#f09135",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Gravitee"
               }
             ]
           },
@@ -8380,10 +8413,6 @@
                   "fixedColor": "#953984",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Envoy Gateway"
               }
             ]
           }
@@ -9374,10 +9403,6 @@
                   "fixedColor": "#f09135",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Gravitee"
               }
             ]
           },
@@ -9408,10 +9433,6 @@
                   "fixedColor": "#953984",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Envoy Gateway"
               }
             ]
           }
@@ -9627,10 +9648,6 @@
                   "fixedColor": "#f09135",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Gravitee"
               }
             ]
           },
@@ -9661,10 +9678,6 @@
                   "fixedColor": "#953984",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Envoy Gateway"
               }
             ]
           }
@@ -10443,6 +10456,81 @@
           {
             "matcher": {
               "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#00d9ba",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#1155cb",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#f09135",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "D"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#24a1c1",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "E"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#b140f5",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
               "options": "F"
             },
             "properties": [
@@ -10624,6 +10712,81 @@
           "unit": "bytes"
         },
         "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#00d9ba",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#1155cb",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#f09135",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "D"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#24a1c1",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "E"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#b140f5",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
           {
             "matcher": {
               "id": "byFrameRefID",
@@ -11427,6 +11590,81 @@
           {
             "matcher": {
               "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#00d9ba",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#1155cb",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#f09135",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "D"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#24a1c1",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "E"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#b140f5",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
               "options": "F"
             },
             "properties": [
@@ -11607,6 +11845,81 @@
           "unit": "bytes"
         },
         "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#00d9ba",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#1155cb",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#f09135",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "D"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#24a1c1",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "E"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#b140f5",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
           {
             "matcher": {
               "id": "byFrameRefID",
