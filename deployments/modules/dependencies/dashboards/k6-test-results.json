@@ -13098,6 +13098,21 @@
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "avg by (container) (kube_pod_container_resource_requests{container=\"envoy\", resource=\"cpu\", namespace=\"envoygateway\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Containers CPU Requests",
@@ -13288,6 +13303,21 @@
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "avg by (container) (kube_pod_container_resource_limits{container=\"envoy\",resource=\"cpu\", namespace=\"envoygateway\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Containers CPU Limits",
@@ -13478,6 +13508,21 @@
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(kube_pod_container_resource_requests{container=\"envoy\", resource=\"cpu\", namespace=\"envoygateway\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Total CPU Requests",
@@ -13668,6 +13713,21 @@
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(kube_pod_container_resource_limits{container=\"envoy\",resource=\"cpu\", namespace=\"envoygateway\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Total CPU Limits",
@@ -13859,6 +13919,21 @@
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "avg by (container) (kube_pod_container_resource_requests{container=\"envoy\",resource=\"memory\", namespace=\"envoygateway\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Containers Memory Requests",
@@ -14050,6 +14125,21 @@
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "avg by (container) (kube_pod_container_resource_limits{container=\"envoy\",resource=\"memory\", namespace=\"envoygateway\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Containers Memory Limits",
@@ -14240,6 +14330,21 @@
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(kube_pod_container_resource_requests{container=\"envoy\",resource=\"memory\", namespace=\"envoygateway\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Total Memory Requests",
@@ -14431,6 +14536,21 @@
           "legendFormat": "__auto",
           "range": true,
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(kube_pod_container_resource_limits{container=\"envoy\",resource=\"memory\", namespace=\"envoygateway\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "range": true,
+          "refId": "E"
         }
       ],
       "title": "Total Memory Limits",
