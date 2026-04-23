@@ -63,65 +63,6 @@ module "traefik" {
 }
 
 
-# ---------------------------------------------------------------------------
-# CRD readiness gate
-#
-# The dependencies Traefik Helm chart v39.x ships its CRDs inside
-# `templates/` (not `crds/`), so `skip_crds = true` doesn't suppress them —
-# they land alongside the Deployment. Helm's wait=true then only waits for
-# pods to be Ready; it doesn't wait for the API server's discovery cache to
-# refresh before Terraform moves on to the next helm_release.
-#
-# On a cold apply, that race breaks two downstream installs:
-#   - dependencies/keycloak references traefik.io/v1alpha1 Middleware
-#   - providers/traefik references Gateway / GatewayClass / IngressRoute
-#
-# This null_resource blocks until every CRD they reference is `Established`
-# in the API server, so the consumers never race.
-# ---------------------------------------------------------------------------
-resource "null_resource" "wait_for_traefik_crds" {
-  triggers = {
-    # Re-run whenever the dep-Traefik Helm release changes (version bump,
-    # replica change, …) and on every apply (timestamp) so we don't cache a
-    # stale "ready" from a prior terraform run.
-    traefik_namespace = var.namespace
-    always_run        = timestamp()
-  }
-
-  provisioner "local-exec" {
-    interpreter = ["bash", "-c"]
-    command     = <<-EOT
-      set -e
-      echo "Waiting for Traefik + Gateway API + Hub CRDs to be Established..."
-      for crd in \
-        middlewares.traefik.io \
-        middlewaretcps.traefik.io \
-        ingressroutes.traefik.io \
-        ingressroutetcps.traefik.io \
-        ingressrouteudps.traefik.io \
-        serverstransports.traefik.io \
-        tlsoptions.traefik.io \
-        tlsstores.traefik.io \
-        traefikservices.traefik.io \
-        gatewayclasses.gateway.networking.k8s.io \
-        gateways.gateway.networking.k8s.io \
-        httproutes.gateway.networking.k8s.io \
-        referencegrants.gateway.networking.k8s.io \
-        apis.hub.traefik.io \
-        apiauths.hub.traefik.io \
-        apiratelimits.hub.traefik.io \
-        managedapplications.hub.traefik.io \
-        managedsubscriptions.hub.traefik.io; do
-        kubectl wait --for=condition=established --timeout=180s "crd/$crd" \
-          || { echo "Timed out waiting for $crd"; exit 1; }
-      done
-      echo "All required CRDs are Established."
-    EOT
-  }
-
-  depends_on = [module.traefik]
-}
-
 module "cert-manager" {
   source = "../../../../terraform-demo-modules/tools/cert-manager/k8s"
 
@@ -154,8 +95,11 @@ module "keycloak" {
     enabled = true
   }
 
-  count      = var.keycloak.enabled ? 1 : 0
-  depends_on = [kubernetes_namespace_v1.dependencies, null_resource.wait_for_traefik_crds]
+  count = var.keycloak.enabled ? 1 : 0
+  # The dep-Traefik Helm chart installs the Traefik + Gateway API + Hub CRDs
+  # as part of its templates/. Keycloak's chart references Middleware, so
+  # its install has to start after dep-Traefik's is Created.
+  depends_on = [kubernetes_namespace_v1.dependencies, module.traefik]
 }
 
 
