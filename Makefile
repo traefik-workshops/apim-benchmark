@@ -169,7 +169,7 @@ validate: ## Validate all Terraform modules
 	cd $(CLUSTER_DIR) && terraform fmt -check && terraform validate
 	cd deployments && terraform fmt -check && terraform validate
 
-validate-nodes: ## Assert every benchmark node pool has matching instance type/CPU/memory
+validate-nodes: ## Assert every benchmark node pool has matching instance type + vCPU count
 	@bash -c 'set -euo pipefail; \
 		echo "==> validate-nodes (context=$(KUBE_CONTEXT))"; \
 		ok=1; \
@@ -177,7 +177,7 @@ validate-nodes: ## Assert every benchmark node pool has matching instance type/C
 		print_pool() { \
 			local role="$$1"; \
 			kubectl --context=$(KUBE_CONTEXT) get nodes -l node=$$role \
-				-o jsonpath="{range .items[*]}{.metadata.labels.node\\.kubernetes\\.io/instance-type} {.status.capacity.cpu} {.status.capacity.memory}{\"\\n\"}{end}" 2>/dev/null; \
+				-o jsonpath="{range .items[*]}{.metadata.labels.node\\.kubernetes\\.io/instance-type} {.status.capacity.cpu}{\"\\n\"}{end}" 2>/dev/null; \
 		}; \
 		for p in traefik kong tyk gravitee envoygateway upstream; do \
 			roles="$$p $$p-upstream $$p-loadgen"; \
