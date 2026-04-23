@@ -74,7 +74,8 @@ module "traefik" {
   route_count       = var.apim_providers_route_count
   traefik_hub_token = var.traefik_hub_token
 
-  count = var.apim_providers.traefik.enabled ? 1 : 0
+  count      = var.apim_providers.traefik.enabled ? 1 : 0
+  depends_on = [module.dependencies]
 }
 
 # ---------------------------------------------------------------------------
