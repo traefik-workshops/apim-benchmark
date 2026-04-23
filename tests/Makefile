@@ -129,11 +129,12 @@ validate-test: ## PROVIDER=<x> — 30s probe + assert pod placement + assert met
 		else \
 			echo "  [OK]   runner on $$runner_node"; \
 		fi; \
-		echo "==> Asserting metrics in Prometheus..."; \
-		kubectl --context=$$CTX -n dependencies port-forward svc/prometheus-kube-prometheus-prometheus 19090:9090 >/dev/null 2>&1 & \
+		echo "==> Asserting metrics in VictoriaMetrics..."; \
+		kubectl --context=$$CTX -n dependencies port-forward svc/vm-vmselect 18481:8481 >/dev/null 2>&1 & \
 		PF=$$!; sleep 3; \
-		reqs=$$(curl -s "http://localhost:19090/api/v1/query?query=max(max_over_time(k6_http_reqs_total%7Btestid%3D%22$$P%22%7D%5B5m%5D))" | python3 -c "import json,sys;r=json.load(sys.stdin)[\"data\"][\"result\"];print(r[0][\"value\"][1] if r else \"0\")"); \
-		fail=$$(curl -s "http://localhost:19090/api/v1/query?query=max(max_over_time(k6_http_req_failed_rate%7Btestid%3D%22$$P%22%7D%5B5m%5D))" | python3 -c "import json,sys;r=json.load(sys.stdin)[\"data\"][\"result\"];print(r[0][\"value\"][1] if r else \"0\")"); \
+		VM=http://localhost:18481/select/0/prometheus/api/v1/query; \
+		reqs=$$(curl -s "$$VM?query=max(max_over_time(k6_http_reqs_total%7Btestid%3D%22$$P%22%7D%5B5m%5D))" | python3 -c "import json,sys;r=json.load(sys.stdin)[\"data\"][\"result\"];print(r[0][\"value\"][1] if r else \"0\")"); \
+		fail=$$(curl -s "$$VM?query=max(max_over_time(k6_http_req_failed_rate%7Btestid%3D%22$$P%22%7D%5B5m%5D))" | python3 -c "import json,sys;r=json.load(sys.stdin)[\"data\"][\"result\"];print(r[0][\"value\"][1] if r else \"0\")"); \
 		kill $$PF 2>/dev/null || true; \
 		if [ "$$(printf %.0f $$reqs)" -lt "100" ]; then \
 			echo "  [FAIL] k6_http_reqs_total{testid=$$P} = $$reqs (expected >= 100)"; ok=0; \
