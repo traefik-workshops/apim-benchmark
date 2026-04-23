@@ -139,6 +139,11 @@ resource "helm_release" "victoria_metrics" {
           # Accept Prom remote-write on the default Prom path so existing
           # k6 runners and kube-prometheus-stack point here unchanged.
           "httpListenAddr" = ":8480"
+          # GKE's kube_node_labels exposes 42 labels per node (addon_*,
+          # cloud_google_com_*, disk_type_gke_io_*, topology_*, our own
+          # label_node, etc.). Default limit is 30 → series silently dropped.
+          # Bump to 64 to cover GKE's sprawl with headroom.
+          "maxLabelsPerTimeseries" = "64"
         }
         tolerations  = local.tolerations
         nodeSelector = { node = var.taint }
@@ -152,6 +157,10 @@ resource "helm_release" "victoria_metrics" {
 
       vmstorage = {
         replicaCount = var.vm_replicas
+        extraArgs = {
+          # Same reason as vminsert — vmstorage enforces the same limit.
+          "maxLabelsPerTimeseries" = "64"
+        }
         tolerations  = local.tolerations
         nodeSelector = { node = var.taint }
         persistentVolume = {
