@@ -95,7 +95,7 @@ test-upstream: ## Run k6 load test against upstream (baseline)
 # overlap and gives the cluster scheduler a breath between heavy startups.
 TEST_ALL_SETTLE_SECONDS ?= 30
 
-test-all: ## Run k6 load tests against every provider (settle pause between runs)
+test-all: ## Run k6 load tests against every provider sequentially (settle pause between runs)
 	@set -e; \
 	for p in $(ALL_PROVIDERS); do \
 		echo ""; echo "=== Testing $$p ==="; \
@@ -107,6 +107,30 @@ test-all: ## Run k6 load tests against every provider (settle pause between runs
 		sleep $(TEST_ALL_SETTLE_SECONDS); \
 	done; \
 	echo ""; echo "=== All providers done ==="
+
+test-all-parallel: ## Run k6 load tests against every provider simultaneously (uses all node pools at once)
+	@set -e; \
+	echo "=== Cleaning prior TestRuns for all providers ==="; \
+	for p in $(ALL_PROVIDERS); do \
+		$(MAKE) -C tests clean PROVIDER=$$p KUBE_CONTEXT=$(KUBE_CONTEXT) >/dev/null 2>&1 || true; \
+	done; \
+	echo ""; echo "=== Submitting TestRuns in parallel ==="; \
+	for p in $(ALL_PROVIDERS); do \
+		echo "--- submit $$p ---"; \
+		$(MAKE) -C tests run PROVIDER=$$p CONFIG=$(TEST_CONFIG) KUBE_CONTEXT=$(KUBE_CONTEXT) >/dev/null; \
+	done; \
+	echo ""; echo "=== Waiting for every TestRun to finish ==="; \
+	while :; do \
+		pending=""; \
+		for p in $(ALL_PROVIDERS); do \
+			stage=$$(kubectl --context=$(KUBE_CONTEXT) get testrun test -n $$p -o jsonpath='{.status.stage}' 2>/dev/null); \
+			[ "$$stage" != "finished" ] && pending="$$pending $$p:$${stage:-?}"; \
+		done; \
+		if [ -z "$$pending" ]; then break; fi; \
+		echo "$$(date +%H:%M:%S) pending:$$pending"; \
+		sleep 15; \
+	done; \
+	echo ""; echo "=== All providers finished in parallel ==="
 
 test-clean: ## Clean up all test resources
 	$(MAKE) -C tests clean-all
