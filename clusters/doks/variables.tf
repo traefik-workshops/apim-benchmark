@@ -39,5 +39,5 @@ variable "loadgen_node_count" {
 
 variable "dependencies_node_count" {
   type    = number
-  default = 1
+  default = 0
 }

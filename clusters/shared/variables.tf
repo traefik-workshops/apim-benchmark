@@ -27,6 +27,6 @@ variable "loadgen_node_count" {
 
 variable "dependencies_node_count" {
   type        = number
-  default     = 1
-  description = "Number of nodes for shared dependencies."
+  default     = 0
+  description = "Number of nodes for shared dependencies. 0 → auto-compute from provider count (1 node per 2 providers, minimum 1). Set explicitly to override."
 }
