@@ -185,7 +185,7 @@ VIRTUAL_USERS=10      # pre-allocated VUs
 DURATION=1            # minutes
 ```
 
-For cloud benchmarks use `tests/config/cloud.env` (10 k RPS, 50 VUs, 15 min).
+For cloud benchmarks use `tests/config/cloud.env` (5 k RPS, 50 VUs, 15 min).
 
 ## Make Targets
 
@@ -238,7 +238,7 @@ make cluster CLUSTER_PROVIDER=gke          # or eks, aks, oke, lke, doks
 # 2. Deploy gateways (auto-picks cloud.tfvars for non-k3d providers)
 make deploy CLUSTER_PROVIDER=gke
 
-# 3. Run tests with cloud config (10 k RPS, 50 VUs, 15 min)
+# 3. Run tests with cloud config (5 k RPS, 50 VUs, 15 min)
 make test-all CONFIG=cloud KUBE_CONTEXT=gke-benchmark
 ```
 

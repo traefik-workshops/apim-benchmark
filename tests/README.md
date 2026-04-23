@@ -22,7 +22,7 @@ Test parameters are set via env files in `config/`:
 | File          | Purpose                                      |
 |---------------|----------------------------------------------|
 | `k3d.env`     | Local k3d defaults (500 RPS, 2 min)          |
-| `cloud.env`   | Cloud benchmarks (10k RPS, 15 min)           |
+| `cloud.env`   | Cloud benchmarks (5k RPS, 15 min)            |
 
 Override the config file with `CONFIG=cloud`:
 

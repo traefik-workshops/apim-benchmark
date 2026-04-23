@@ -263,6 +263,6 @@ curl -s 'http://localhost:9090/api/v1/query?query=sum+by(testid)(k6_http_reqs_to
 2. Cluster outputs `kube_context = <name>-benchmark` (e.g. `gke-benchmark`). Ensure your local kubeconfig has that context.
 3. `make deploy CLUSTER_PROVIDER=<cloud>` — auto-selects `cloud.tfvars`; override `kubernetes_config_context` via `-var kubernetes_config_context=<ctx>` if your context name differs.
 4. `make validate-nodes KUBE_CONTEXT=<ctx>` before running tests — cheap asymmetry catch.
-5. `make test-all CLUSTER_PROVIDER=<cloud> KUBE_CONTEXT=<ctx>` — `TEST_CONFIG` auto-resolves to `cloud` → 10 k RPS × 15 min × 50 VUs.
+5. `make test-all CLUSTER_PROVIDER=<cloud> KUBE_CONTEXT=<ctx>` — `TEST_CONFIG` auto-resolves to `cloud` → 5 k RPS × 15 min × 50 VUs.
 
 For a truly fair cross-cloud comparison, node instance types must be equivalent, not just "similarly named". Current defaults — `m5.xlarge` (EKS), `n2-standard-2` (GKE), `Standard_D2s_v3` (AKS), `g6-dedicated-2` (LKE), `s-4vcpu-8gb` (DOKS), `VM.Standard.E4.Flex` (OKE) — are **not** equivalent on vCPU / RAM / network. Normalize to one profile (e.g. 4 vCPU / 16 GB / comparable network) and update each cloud's `terraform.tfvars` before publishing results. `make validate-nodes` catches intra-cluster mismatches but cannot catch cross-cluster ones — that's on the reviewer.
