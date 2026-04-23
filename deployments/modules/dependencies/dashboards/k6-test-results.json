@@ -6539,10 +6539,6 @@
                   "fixedColor": "#00d9ba",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Tyk"
               }
             ]
           },
@@ -6558,10 +6554,6 @@
                   "fixedColor": "#1155cb",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Kong"
               }
             ]
           },
@@ -6577,10 +6569,6 @@
                   "fixedColor": "#f09135",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Gravitee"
               }
             ]
           },
@@ -6596,10 +6584,6 @@
                   "fixedColor": "#f09135",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Gravitee"
               }
             ]
           },
@@ -6615,10 +6599,6 @@
                   "fixedColor": "#24a1c1",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Traefik"
               }
             ]
           },
@@ -6634,10 +6614,6 @@
                   "fixedColor": "#b140f5",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Upstream"
               }
             ]
           },
@@ -6653,10 +6629,6 @@
                   "fixedColor": "#953984",
                   "mode": "fixed"
                 }
-              },
-              {
-                "id": "displayName",
-                "value": "Envoy Gateway"
               }
             ]
           }
@@ -6692,7 +6664,7 @@
           "exemplar": true,
           "expr": "avg by(testid)(sum by(testid)(irate(k6_data_received_total[5m])))",
           "interval": "",
-          "legendFormat": "Received - {{testid}}",
+          "legendFormat": "{{testid}}-received",
           "range": true,
           "refId": "A"
         },
@@ -6706,7 +6678,7 @@
           "expr": "avg by(testid)(sum by(testid)(irate(k6_data_sent_total[5m])))",
           "hide": false,
           "interval": "",
-          "legendFormat": "Sent - {{testid}}",
+          "legendFormat": "{{testid}}-sent",
           "range": true,
           "refId": "B"
         }
