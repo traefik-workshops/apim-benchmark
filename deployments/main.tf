@@ -9,11 +9,13 @@ locals {
   # Auto-scale Keycloak replica count by enabled provider count. Keycloak
   # becomes a bottleneck during the k6 setup() phase when several
   # parallel TestRuns all mint OIDC tokens at once (jwt_keycloak auth).
-  # Formula: one replica per enabled provider, minimum 2 for HA.
+  # Formula: one replica per 2 enabled providers, minimum 2 for HA —
+  # matches the dependencies-node pool scaling (clusters/shared/main.tf)
+  # so pod count stays proportional to the node count we actually have.
   enabled_provider_count = length([
     for name, cfg in var.apim_providers : name if cfg.enabled
   ]) + (var.upstream.enabled ? 1 : 0)
-  keycloak_instances = max(local.enabled_provider_count, 2)
+  keycloak_instances = max(ceil(local.enabled_provider_count / 2), 2)
 }
 
 # ---------------------------------------------------------------------------
@@ -26,7 +28,7 @@ module "dependencies" {
   domain                = var.domain
   service_type          = var.dependencies_service_type
   traefik_chart_version = local.chart_versions.dep_traefik
-  vm_replicas           = local.keycloak_instances # same shape: one per provider, min 2
+  vm_replicas           = local.keycloak_instances # same shape: one per 2 providers, min 2
 
   dns_traefiker = {
     enabled     = var.dns_traefiker.enabled
