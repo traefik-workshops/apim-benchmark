@@ -260,5 +260,19 @@ module "grafana-stack" {
   # dashboard rewrites.
   prometheus_url_override = "http://vm-vmselect.${var.namespace}.svc:8481/select/0/prometheus"
 
+  # Re-enable the "Publish to snapshot.raintank.io" button on the Share
+  # Snapshot dialog. The grafana/grafana chart ships it disabled by
+  # default in recent versions, which is why the dropdown entry
+  # disappeared. Local snapshots are always available regardless.
+  grafana_extra_values = {
+    "grafana.ini" = {
+      snapshots = {
+        external_enabled       = true
+        external_snapshot_url  = "https://snapshots-origin.raintank.io"
+        external_snapshot_name = "Publish to snapshot.raintank.io"
+      }
+    }
+  }
+
   depends_on = [kubernetes_namespace_v1.dependencies, helm_release.victoria_metrics]
 }
