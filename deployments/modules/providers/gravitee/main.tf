@@ -51,6 +51,22 @@ resource "helm_release" "gravitee" {
 
   values = [
     yamlencode({
+      # Enable Gravitee's Kubernetes secret provider so the gateway can
+      # resolve `secret://kubernetes/<secret-name>` URIs at startup. Used
+      # below in gateway.ssl.keystore.secret to load the cert-manager-
+      # provisioned TLS material without volume-mounting it. The
+      # gateway's ServiceAccount already has secrets:get/list/watch
+      # (see chart-template common/role.yaml + apim.roleRules default).
+      # Always emit the block so the ternary on .ssl.enabled below flips
+      # cleanly without changing the Helm values shape; the secrets
+      # plugin sits idle until something resolves a secret:// URI.
+      secrets = {
+        loadFirst = "kubernetes"
+        kubernetes = {
+          enabled = var.middlewares.tls.enabled
+        }
+      }
+
       # --- Gateway -----------------------------------------------------------
       gateway = {
         apiKey = {
@@ -101,10 +117,23 @@ resource "helm_release" "gravitee" {
             enabled = false
           }
         }
-        # NOTE: Gravitee TLS termination is not configured at the gateway level.
-        # The APIM Helm chart's `servers` config requires additional logback
-        # resources that conflict with our setup. TLS is handled by external
-        # ingress/load-balancer when needed.
+        # TLS termination on the gateway's HTTP listener. Uses the chart's
+        # legacy gateway.ssl path (single listener) rather than the newer
+        # gateway.servers array — the latter swaps in additional logback
+        # boilerplate that conflicts with our minimal config. Same
+        # internalPort (8082) becomes HTTPS when ssl.enabled.
+        # tlsProtocols pins to TLS 1.3 only; Gravitee/JSSE will then
+        # negotiate one of the three TLS 1.3 AEADs with no 1.2 fallback.
+        ssl = {
+          enabled      = var.middlewares.tls.enabled
+          tlsProtocols = "TLSv1.3"
+          clientAuth   = "none"
+          keystore = {
+            type   = "pem"
+            secret = "secret://kubernetes/gateway-tls-cert"
+            watch  = true
+          }
+        }
         ratelimit = {
           redis = {
             host     = "gravitee-redis"
