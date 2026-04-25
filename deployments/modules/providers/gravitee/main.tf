@@ -214,3 +214,61 @@ resource "helm_release" "gravitee" {
 
   depends_on = [module.redis, module.pgsql, module.upstream]
 }
+
+# ---------------------------------------------------------------------------
+# Post-apply patch: inject `tlsProtocols: TLSv1.3` into gravitee.yml.
+#
+# The APIM Helm chart's gateway-configmap template renders the
+# http.ssl block with `keystore`, `clientAuth`, `truststore`, `crl`,
+# and `sni` -- but *not* `tlsProtocols` (confirmed by grep'ing
+# templates/gateway/gateway-configmap.yaml). Setting
+# gateway.ssl.tlsProtocols in values is silently dropped. Gravitee
+# (Vert.x/JSSE) then falls back to JDK defaults, which accept 1.2+1.3.
+#
+# Post-apply we read the ConfigMap, inject the line right after the
+# `    ssl:` header in gravitee.yml, update the CM, and roll the
+# gateway pod so it loads the new config. Idempotent -- the sed only
+# inserts when the line is absent.
+# ---------------------------------------------------------------------------
+resource "null_resource" "gravitee_tls13_patch" {
+  count = var.middlewares.tls.enabled ? 1 : 0
+
+  triggers = {
+    namespace     = var.namespace
+    chart_version = var.chart_version
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      set -e
+      NS="${var.namespace}"
+      CM="gravitee-apim-gateway"
+      DEPLOY="gravitee-apim-gateway"
+
+      YAML=$(kubectl -n "$NS" get cm "$CM" -o jsonpath='{.data.gravitee\.yml}')
+      if printf '%s' "$YAML" | grep -q 'tlsProtocols:'; then
+        echo "gravitee.yml already contains tlsProtocols; skipping"
+        exit 0
+      fi
+
+      PATCHED=$(printf '%s' "$YAML" | python3 -c "
+import sys, re
+s = sys.stdin.read()
+# Insert 'tlsProtocols: TLSv1.3' under the first http.ssl: at 4-space
+# indent (the gravitee.yml rendered by the chart puts ssl: at 2 spaces
+# under http:, so its children live at 4-space indent).
+s = re.sub(r'^(  ssl:\n)', r'\\1    tlsProtocols: TLSv1.3\n', s, count=1, flags=re.MULTILINE)
+sys.stdout.write(s)
+")
+
+      # Re-render the ConfigMap from the patched yaml and apply it.
+      kubectl -n "$NS" create cm "$CM" --from-literal=gravitee.yml="$PATCHED" \
+        --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+
+      kubectl -n "$NS" rollout restart deploy/"$DEPLOY"
+      kubectl -n "$NS" rollout status deploy/"$DEPLOY" --timeout=180s
+    EOT
+  }
+
+  depends_on = [helm_release.gravitee]
+}

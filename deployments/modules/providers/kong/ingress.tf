@@ -19,6 +19,14 @@ spec:
 %{if var.middlewares.tls.enabled~}
   tls:
   - secretName: gateway-tls-cert
+    # Kong maps a cert to SNI hostnames via the Ingress TLS block's
+    # `hosts` field. Without an entry here Kong falls back to its
+    # bundled CN=localhost cert for every SNI. The cert's SANs are
+    # *.<namespace>.svc and *.<namespace>.svc.cluster.local, so list
+    # both to cover in-cluster service DNS in either form.
+    hosts:
+    - "*.${var.namespace}.svc"
+    - "*.${var.namespace}.svc.cluster.local"
 %{endif~}
   rules:
   - http:

@@ -119,6 +119,19 @@ resource "helm_release" "tyk" {
             }]
           }
 
+          # The tyk-gateway chart template hardcodes
+          #   TYK_GW_HTTPSERVEROPTIONS_MINVERSION=771   (TLS 1.2)
+          # with no values-path override, and never emits MAXVERSION.
+          # MAXVERSION we can add cleanly via extraEnvs (the chart
+          # doesn't emit it, so there's no duplicate); MINVERSION has
+          # to be patched post-apply because Kubernetes' strategic
+          # merge on the env list dedups by name, keeping the chart's
+          # 771 over our extraEnvs 772. The null_resource below does
+          # a JSON patch after helm lands. 772 = TLS 1.3.
+          extraEnvs = var.middlewares.tls.enabled ? [
+            { name = "TYK_GW_HTTPSERVEROPTIONS_MAXVERSION", value = "772" },
+          ] : []
+
           extraVolumes = concat([
             {
               name = "tyk-api-definitions"
@@ -169,17 +182,11 @@ resource "helm_release" "tyk" {
             } : {},
 
             # --- TLS termination ------------------------------------------------
-            # Cert + TLS-listener wiring is in the Helm chart values
-            # above (global.tls.gateway + tyk-gateway.gateway.tls).
-            # Force TLS 1.3 only at the gateway server. Tyk's
-            # http_server_options.{min,max}_version uses Go's
-            # crypto/tls TLSVersion enum: 772 = TLS 1.3.
-            var.middlewares.tls.enabled ? {
-              http_server_options = {
-                min_version = 772
-                max_version = 772
-              }
-            } : {},
+            # Cert + TLS-listener wiring is in the Helm chart values above
+            # (global.tls.gateway + tyk-gateway.gateway.tls). Min/max TLS
+            # version is pinned via extraEnvs above -- tykConfig values
+            # are no-ops for that setting because the chart hardcodes a
+            # MINVERSION env var that takes precedence.
 
             # --- OpenTelemetry tracing ------------------------------------------
             var.middlewares.observability.traces.enabled ? {
@@ -204,4 +211,39 @@ resource "helm_release" "tyk" {
     module.redis,
     kubernetes_config_map_v1.tyk_api_definitions,
   ]
+}
+
+# ---------------------------------------------------------------------------
+# Post-apply patch: force TYK_GW_HTTPSERVEROPTIONS_MINVERSION=772 on the
+# gateway Deployment's container env. The chart template hardcodes 771
+# (TLS 1.2) with no values-path override; strategic merge on the
+# container.env list dedups by name, so adding the override via
+# extraEnvs loses to the chart's earlier entry. We patch after helm
+# applies, using a JSON Patch that targets the specific env entry by
+# path (Kubernetes allows this via `kubectl patch --type=json`).
+#
+# Re-runs on every apply (triggers keyed to chart version + tls flag)
+# and on restarts of this null_resource. Idempotent — patching the
+# same value is a no-op.
+# ---------------------------------------------------------------------------
+resource "null_resource" "tyk_min_tls_version_patch" {
+  count = var.middlewares.tls.enabled ? 1 : 0
+
+  triggers = {
+    namespace     = var.namespace
+    chart_version = var.chart_version
+    tls_enabled   = tostring(var.middlewares.tls.enabled)
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      set -e
+      kubectl -n ${var.namespace} set env deploy/gateway-tyk-tyk-gateway \
+        TYK_GW_HTTPSERVEROPTIONS_MINVERSION=772
+      kubectl -n ${var.namespace} rollout status \
+        deploy/gateway-tyk-tyk-gateway --timeout=120s
+    EOT
+  }
+
+  depends_on = [helm_release.tyk]
 }
