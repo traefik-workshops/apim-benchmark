@@ -58,8 +58,11 @@ resource "helm_release" "tyk" {
         }
         }, var.middlewares.tls.enabled ? {
         tls = {
-          gateway                  = true
-          useDefaultTykCertificate = true
+          gateway = true
+          # Use the cert-manager-provisioned cert (RSA-2048, shared
+          # algorithm parameters with every other gateway in the
+          # benchmark) instead of the chart-generated self-signed one.
+          useDefaultTykCertificate = false
         }
       } : {})
 
@@ -100,6 +103,21 @@ resource "helm_release" "tyk" {
             node = var.taint
           }
           tolerations = local.tolerations
+
+          # Point Tyk at the shared cert-manager secret. The chart auto-
+          # mounts it at certificatesMountPath and sets
+          # TYK_GW_HTTPSERVEROPTIONS_CERTIFICATES from .tls.certificates.
+          # Harmless when global.tls.gateway is false (the chart only
+          # consumes it when TLS is enabled).
+          tls = {
+            secretName            = "gateway-tls-cert"
+            certificatesMountPath = "/etc/certs/tyk-gateway"
+            certificates = [{
+              domain_name = "*"
+              cert_file   = "/etc/certs/tyk-gateway/tls.crt"
+              key_file    = "/etc/certs/tyk-gateway/tls.key"
+            }]
+          }
 
           extraVolumes = concat([
             {
@@ -151,7 +169,17 @@ resource "helm_release" "tyk" {
             } : {},
 
             # --- TLS termination ------------------------------------------------
-            # TLS is handled by global.tls.gateway in the Helm chart values.
+            # Cert + TLS-listener wiring is in the Helm chart values
+            # above (global.tls.gateway + tyk-gateway.gateway.tls).
+            # Force TLS 1.3 only at the gateway server. Tyk's
+            # http_server_options.{min,max}_version uses Go's
+            # crypto/tls TLSVersion enum: 772 = TLS 1.3.
+            var.middlewares.tls.enabled ? {
+              http_server_options = {
+                min_version = 772
+                max_version = 772
+              }
+            } : {},
 
             # --- OpenTelemetry tracing ------------------------------------------
             var.middlewares.observability.traces.enabled ? {
