@@ -119,6 +119,34 @@ YAML
 }
 
 # ---------------------------------------------------------------------------
+# ClientTrafficPolicy — pin the Gateway's HTTPS listener to TLS 1.3 only.
+# Targets the Gateway resource by name; the policy applies to every
+# listener attached. Min == max excludes 1.2 fallback. Envoy
+# (BoringSSL) negotiates the three RFC 8446 TLS 1.3 AEADs by default
+# under that constraint.
+# ---------------------------------------------------------------------------
+resource "kubectl_manifest" "client_traffic_policy_tls" {
+  yaml_body = <<YAML
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: ClientTrafficPolicy
+metadata:
+  name: tls-13
+  namespace: ${var.namespace}
+spec:
+  targetRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: envoy-gateway
+  tls:
+    minVersion: "1.3"
+    maxVersion: "1.3"
+YAML
+
+  count      = var.middlewares.tls.enabled ? 1 : 0
+  depends_on = [kubectl_manifest.gateway]
+}
+
+# ---------------------------------------------------------------------------
 # HTTPRoutes — API routing definitions (with optional header manipulation)
 # ---------------------------------------------------------------------------
 resource "kubectl_manifest" "api" {

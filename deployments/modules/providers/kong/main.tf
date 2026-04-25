@@ -78,7 +78,7 @@ resource "helm_release" "kong" {
 
         replicaCount = var.deployment.replica_count
 
-        env = {
+        env = merge({
           role                            = "traditional"
           database                        = "off"
           nginx_worker_processes          = "auto"
@@ -87,7 +87,13 @@ resource "helm_release" "kong" {
           proxy_access_log                = var.middlewares.observability.logs.enabled ? "/dev/stdout" : "off"
           tracing_instrumentations        = var.middlewares.observability.traces.enabled ? "all" : "off"
           tracing_sampling_rate           = var.middlewares.observability.traces.enabled ? "1" : "0"
-        }
+          },
+          # Kong wraps nginx for the proxy; KONG_NGINX_PROXY_SSL_PROTOCOLS
+          # is rendered into the proxy server block as `ssl_protocols
+          # TLSv1.3;`. Restricts the negotiable set to TLS 1.3 only.
+          var.middlewares.tls.enabled ? {
+            nginx_proxy_ssl_protocols = "TLSv1.3"
+        } : {})
 
         admin = {
           enabled   = true
