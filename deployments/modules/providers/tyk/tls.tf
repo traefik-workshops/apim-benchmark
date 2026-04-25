@@ -13,6 +13,13 @@ spec:
   issuerRef:
     name: selfsigned-issuer
     kind: ClusterIssuer
+  # Pin keypair so every provider serves a cert with identical algorithm
+  # parameters. RSA-2048 + SHA-256 signature is the production-default
+  # combo (Mozilla "modern" profile, ~99% of public TLS handshakes today)
+  # and is universally supported by every gateway's TLS stack.
+  privateKey:
+    algorithm: RSA
+    size: 2048
   dnsNames:
   - "*.${var.namespace}.svc"
   - "*.${var.namespace}.svc.cluster.local"
