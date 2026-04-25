@@ -22,22 +22,40 @@ SCRIPTS_DIR  := $(CURDIR)/k6/scripts
 MANIFESTS_DIR := $(CURDIR)/k6/manifests
 CONFIG_DIR   := $(CURDIR)/config
 
-# Provider → service name mapping
-SERVICE_NAME_traefik  := traefik
-SERVICE_PORT_traefik  := 80
-SERVICE_NAME_kong     := kong-gateway-proxy
-SERVICE_PORT_kong     := 80
-SERVICE_NAME_tyk      := gateway-svc-tyk-tyk-gateway
-SERVICE_PORT_tyk      := 8080
-SERVICE_NAME_gravitee := gravitee-apim-gateway
-SERVICE_PORT_gravitee := 82
-SERVICE_NAME_envoygateway := envoy-gateway-proxy
-SERVICE_PORT_envoygateway := 8080
-SERVICE_NAME_upstream     := fortio
-SERVICE_PORT_upstream     := 8080
+# Provider → service name + per-protocol ports.
+# SERVICE_PORT_<p>     : k8s Service port for the gateway's HTTP listener.
+# SERVICE_TLS_PORT_<p> : k8s Service port for the gateway's HTTPS listener.
+#                       Selected automatically when USE_TLS=true.
+#
+# Tyk and Gravitee terminate TLS on the same socket as HTTP, so their
+# TLS port == HTTP port. Traefik/Kong/Envoy expose distinct websecure/
+# proxy-tls/HTTPS listeners. Upstream (baseline Fortio) doesn't speak
+# TLS at all; its TLS port is left equal to the HTTP port -- if you run
+# USE_TLS=true with PROVIDER=upstream, k6 will hit https:// against a
+# plain socket and the test will fail. Either skip upstream from
+# TLS-on benchmark runs or front Fortio with a TLS-terminating sidecar.
+SERVICE_NAME_traefik          := traefik
+SERVICE_PORT_traefik          := 80
+SERVICE_TLS_PORT_traefik      := 443
+SERVICE_NAME_kong             := kong-gateway-proxy
+SERVICE_PORT_kong             := 80
+SERVICE_TLS_PORT_kong         := 443
+SERVICE_NAME_tyk              := gateway-svc-tyk-tyk-gateway
+SERVICE_PORT_tyk              := 8080
+SERVICE_TLS_PORT_tyk          := 8080
+SERVICE_NAME_gravitee         := gravitee-apim-gateway
+SERVICE_PORT_gravitee         := 82
+SERVICE_TLS_PORT_gravitee     := 82
+SERVICE_NAME_envoygateway     := envoy-gateway-proxy
+SERVICE_PORT_envoygateway     := 8080
+SERVICE_TLS_PORT_envoygateway := 8443
+SERVICE_NAME_upstream         := fortio
+SERVICE_PORT_upstream         := 8080
+SERVICE_TLS_PORT_upstream     := 8080
 
+# Lazy-expanded so USE_TLS (set later by include $(CONFIG).env) is in scope.
 SERVICE_NAME = $(SERVICE_NAME_$(PROVIDER))
-SERVICE_PORT = $(SERVICE_PORT_$(PROVIDER))
+SERVICE_PORT = $(if $(filter true,$(USE_TLS)),$(SERVICE_TLS_PORT_$(PROVIDER)),$(SERVICE_PORT_$(PROVIDER)))
 
 KUBECTL := kubectl --context=$(KUBE_CONTEXT)
 
